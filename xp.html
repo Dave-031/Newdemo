@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0">
+    <title>Windows XP Login</title>
+    <style>
+      html {
+        font-family: sans-serif;
+        line-height: 1.15;
+        -ms-text-size-adjust: 100%;
+        -webkit-text-size-adjust: 100%
+      }
+
+      body {
+        margin: 0
+      }
+
+      .login-screen {
+        width: 100vw;
+        height: 100vh;
+        background-color: #508fd9;
+        color: #fff;
+        display: flex;
+        flex-direction: column
+      }
+
+      .login-screen__bottom,
+      .login-screen__top {
+        background-color: #004da3;
+        flex-basis: 12.5%;
+        border-style: solid;
+        border-image-slice: 1
+      }
+
+      .login-screen__top {
+        border-image-source: linear-gradient(90deg, #004da3 0, rgba(255, 255, 255, .8) 30%, rgba(255, 255, 255, .9) 40%, rgba(255, 255, 255, .9) 50%, #004da3 100%);
+        border-width: 0 0 4px 0
+      }
+
+      .login-screen__bottom {
+        padding: 40px 80px 40px 40px;
+        display: flex;
+        justify-content: space-between;
+        border-image-source: linear-gradient(90deg, #004da3 0, #f09644 30%, #f09644 40%, #f09644 50%, #004da3 100%);
+        border-width: 4px 0 0 0
+      }
+
+      .login-screen__center {
+        flex: 1;
+        display: flex;
+        background-image: radial-gradient(circle, rgba(255, 255, 255, .6) -21%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, 0) 100%);
+        background-size: 700px 700px;
+        background-position: -240px -210px;
+        background-repeat: no-repeat;
+        z-index: 0
+      }
+
+      .login-screen__accounts,
+      .login-screen__instructions {
+        flex-basis: 50%
+      }
+
+      .login-screen__instructions {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding-right: 30px;
+        align-items: flex-end;
+        border-right-width: 1px;
+        border-image-source: linear-gradient(180deg, rgba(255, 255, 255, 0) 0, rgba(255, 255, 255, 0) 5%, rgba(255, 255, 255, .5) 15%, rgba(255, 255, 255, .5) 50%, rgba(255, 255, 255, .5) 85%, rgba(255, 255, 255, 0) 95%, rgba(255, 255, 255, 0) 100%);
+        border-image-slice: 0 1 0 0;
+        border-right-style: solid
+      }
+
+      .login-screen__instructions img,
+      .login-screen__instructions span {
+        display: block
+      }
+
+      .login-screen__instructions img {
+        width: 250px;
+        margin-bottom: 40px
+      }
+
+      .login-screen__instructions span {
+        text-align: right;
+        font-size: 24px
+      }
+
+      .login-screen__accounts {
+        padding-left: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start
+      }
+
+      .login-screen__account {
+        outline: 0;
+        cursor: pointer;
+        display: flex;
+        min-width: 400px;
+        max-width: 100%;
+        opacity: .6;
+        padding: 12px;
+        border-radius: 8px;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        border: 1px solid transparent;
+        border-right: 0;
+        position: relative;
+        background-clip: padding-box;
+        border: 1px solid transparent
+      }
+
+      .login-screen__account-icon {
+        width: 80px;
+        height: 80px;
+        margin-right: 20px;
+        border: 3px solid #fff;
+        border-radius: 5px;
+        box-shadow: 3px 3px 3px 0 rgba(0, 0, 0, .3)
+      }
+
+      .login-screen__account-icon img {
+        width: 100%;
+        height: 100%
+      }
+
+      .login-screen__account-details {
+        position: relative
+      }
+
+      .login-screen__account-name {
+        font-size: 24px;
+        margin-bottom: 20px;
+        display: block
+      }
+
+      .login-screen__account.active,
+      .login-screen__account.logging-in,
+      .login-screen__account:hover {
+        opacity: 1
+      }
+
+      .login-screen__account.active .login-screen__account-icon,
+      .login-screen__account.logging-in .login-screen__account-icon,
+      .login-screen__account:hover .login-screen__account-icon {
+        border-color: #ffcc36
+      }
+
+      .login-screen__account.active .login-screen__account-name,
+      .login-screen__account.logging-in .login-screen__account-name,
+      .login-screen__account:hover .login-screen__account-name {
+        margin-bottom: 2px
+      }
+
+      .login-screen__account.active {
+        cursor: pointer;
+        background: linear-gradient(90deg, #00489a 60%, rgba(255, 255, 255, 0) 100%);
+        background-clip: padding-box
+      }
+
+      .login-screen__account.active::after {
+        content: '';
+        background: linear-gradient(90deg, rgba(255, 255, 255, .6) 40%, rgba(255, 255, 255, 0) 100%);
+        border-radius: 8px;
+        position: absolute;
+        top: -1px;
+        right: -1px;
+        bottom: -1px;
+        left: -1px;
+        z-index: -1;
+        pointer-events: none
+      }
+
+      .login-screen__account.active .login-screen__password {
+        display: block
+      }
+
+      .login-screen__password {
+        display: none;
+        position: absolute;
+        bottom: -20px
+      }
+
+      .login-screen__password>span {
+        display: block;
+        font-size: 14px;
+        margin-bottom: 6px
+      }
+
+      .login-screen__password input {
+        padding: 5px;
+        border: 0;
+        border-radius: 5px;
+        width: 160px;
+        height: 36px;
+        font-size: 30px;
+        box-shadow: #00489a 2px 2px 0 0;
+        outline: 0
+      }
+
+      .login-screen__password button {
+        cursor: pointer;
+        margin-left: 8px;
+        border: 1px solid #fff;
+        border-radius: 5px;
+        width: 32px;
+        height: 32px;
+        background-image: linear-gradient(150deg, rgba(255, 255, 255, .7) 0, rgba(70, 161, 252, 0) 50%);
+        background-repeat: no-repeat;
+        box-shadow: 2px 2px 0 0 #00489a, inset -1px -2px 4px 0 rgba(0, 0, 0, .7);
+        position: relative
+      }
+
+      .login-screen__password button.login-screen__submit {
+        background-color: #3eb34d
+      }
+
+      .login-screen__password button.login-screen__submit::after,
+      .login-screen__password button.login-screen__submit::before {
+        content: '';
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 12px 0 12px 12px;
+        border-color: transparent transparent transparent #fff;
+        position: absolute;
+        top: 50%;
+        right: 4px;
+        transform: translateY(-50%)
+      }
+
+      .login-screen__password button.login-screen__submit::after {
+        border-width: 7px 0 7px 7px;
+        border-color: #3eb34d;
+        border-color: transparent transparent transparent #3eb34d;
+        right: 9px
+      }
+
+      .login-screen__password button.login-screen__submit span {
+        background-color: #fff;
+        position: absolute;
+        height: 4px;
+        width: 17px;
+        top: 50%;
+        transform: translateY(-50%);
+        right: 9px;
+        z-index: 1
+      }
+
+      .login-screen__password button.login-screen__question {
+        background-color: #0573f3;
+        font-size: 30px;
+        font-weight: 900;
+        color: #fff
+      }
+
+      .login-screen__password button.login-screen__question span {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        line-height: 0
+      }
+
+      .login-screen__password>form {
+        display: flex
+      }
+
+      .login-screen__turn-off {
+        display: flex;
+        align-items: center;
+        flex-grow: 0
+      }
+
+      .login-screen__turn-off:hover {
+        text-decoration: underline;
+        cursor: pointer
+      }
+
+      .login-screen__turn-off span {
+        margin-left: 10px;
+        font-size: 24px
+      }
+
+      .login-screen__turn-off-icon {
+        position: relative;
+        background-color: #da5020;
+        border: 1px solid #fff;
+        border-radius: 5px;
+        width: 32px;
+        height: 32px;
+        background-image: linear-gradient(150deg, rgba(255, 255, 255, .7) 0, rgba(70, 161, 252, 0) 50%)
+      }
+
+      .login-screen__turn-off-icon::after,
+      .login-screen__turn-off-icon::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%)
+      }
+
+      .login-screen__turn-off-icon::before {
+        border: 3px solid #fff;
+        border-radius: 50px;
+        width: 14px;
+        height: 14px
+      }
+
+      .login-screen__turn-off-icon::after {
+        background-color: #fff;
+        width: 3px;
+        height: 8px
+      }
+
+      * {
+        box-sizing: border-box;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-screen">
+      <div class="login-screen__top"></div>
+      <div class="login-screen__center">
+        <div class="login-screen__instructions">
+          <img src="/images/xp/winxplogo.png" alt="Windows logo">
+          <span>To begin, click your user name</span>
+        </div>
+        <div class="login-screen__accounts">
+          <div id="account" tabindex="-1" class="login-screen__account">
+            <div class="login-screen__account-icon">
+              <img src="/images/xp/xena.png" alt="duck">
+            </div>
+            <div class="login-screen__account-details">
+              <span class="login-screen__account-name">Admin</span>
+              <div class="login-screen__password">
+                <span>Type your password</span>
+                <form>
+                  <input type="password">
+                  <button class="login-screen__submit" type="submit">
+                    <span></span>
+                  </button>
+                  <button class="login-screen__question" type="button">
+                    <span>?</span>
+                  </button>
+                  <nordpass-icon data-np-uid="7033f239-1c4a-451b-8f1b-39a969e7b7fd" tabindex="-1" style="all:initial!important"></nordpass-icon>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="login-screen__bottom">
+        <div class="login-screen__turn-off">
+          <button class="login-screen__turn-off-icon"></button>
+          <span>Turn off computer</span>
+        </div>
+        <div class="login-screen__login-info">
+          <span>After you log on, you can add or change accounts. <br>Just go to Control Panel and click User Accounts. </span>
+        </div>
+      </div>
+    </div>
+    <script>
+        //user selection logic
+        const userEl = document.getElementById('account');
+
+        userEl.addEventListener('click', () => {
+            userEl.classList.add('active');
+        });
+    </script>
+    <script>
+      (function() {
+        const HASH = "9a61214aa57916b52f9931a30433e546fc9f97e1abbe757073b200ef1c22a059";
+        async function sha256hex(s) {
+          const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
+          return Array.from(new Uint8Array(b)).map(x => x.toString(16).padStart(2, "0")).join("");
+        }
+        window.__tryLogin = async function(value, inputEl) {
+          const ok = (await sha256hex(value || "")) === HASH;
+          if (ok) {
+            parent.postMessage("gs-login-success", "*");
+            return true;
+          }
+          if (inputEl) {
+            inputEl.value = "";
+            inputEl.classList.add("logon__form-input--error");
+            inputEl.style.outline = "2px solid #ef0000";
+            setTimeout(() => {
+              inputEl.classList.remove("logon__form-input--error");
+              inputEl.style.outline = "";
+            }, 700);
+            inputEl.focus();
+          }
+          return false;
+        };
+        window.addEventListener("load", function() {
+          const el = document.querySelector('input[type="password"]');
+          if (el) el.focus();
+        });
+      })();
+    </script>
+    <script>
+      const xpForm = document.querySelector(".login-screen__password form");
+      xpForm.addEventListener("submit", function(e) {
+        e.preventDefault();
+        const el = xpForm.querySelector('input[type="password"]');
+        window.__tryLogin(el.value, el);
+      });
+    </script>
+  </body>
+</html>

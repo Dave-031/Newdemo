@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Windows 98 Login</title>
+    <link rel="stylesheet" href="https://unpkg.com/98.css">
+    <style>
+      body {
+        background-color: teal;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        font-family: 'Pixelated MS Sans Serif', Arial, sans-serif
+      }
+
+      .window {
+        width: 450px
+      }
+
+      .window-body {
+        padding: 12px
+      }
+
+      .login-container {
+        display: flex;
+        align-items: flex-start
+      }
+
+      .login-icon {
+        width: 60px;
+        height: 60px;
+        margin-right: 15px;
+        margin-top: 4px
+      }
+
+      .login-form-area {
+        flex: 1
+      }
+
+      .row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px
+      }
+
+      .row label {
+        width: 90px
+      }
+
+      .row input {
+        flex: 1
+      }
+
+      .button-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-left: 15px
+      }
+
+      .button-group button {
+        width: 75px
+      }
+    </style>
+  </head>
+  <body>
+    <div class="window">
+      <div class="title-bar">
+        <div class="title-bar-text">Welcome To Windows</div>
+        <div class="title-bar-controls">
+          <button aria-label="Close"></button>
+        </div>
+      </div>
+      <div class="window-body">
+        <div class="login-container">
+          <img class="login-icon" alt="Login Key" src="https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@7e3eaf593763f12fcbc2025f55cf1651f3ade7ce/images/keys98.png">
+          <div class="login-form-area">
+            <p style="margin-top:0;margin-bottom:15px">Type your user name and password for Microsoft Networking.</p>
+            <div class="row">
+              <label for="username">User name:</label>
+              <input id="username" type="text" value="Admin" disabled="disabled" readonly="readonly">
+            </div>
+            <div class="row">
+              <label for="password">Password:</label>
+              <input id="password" type="password">
+            </div>
+          </div>
+          <div class="button-group">
+            <button id="ok-btn">OK</button>
+            <button>Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      (function() {
+        const HASH = "9a61214aa57916b52f9931a30433e546fc9f97e1abbe757073b200ef1c22a059";
+        async function sha256hex(s) {
+          const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
+          return Array.from(new Uint8Array(b)).map(x => x.toString(16).padStart(2, "0")).join("");
+        }
+        window.__tryLogin = async function(value, inputEl) {
+          const ok = (await sha256hex(value || "")) === HASH;
+          if (ok) {
+            parent.postMessage("gs-login-success", "*");
+            return true;
+          }
+          if (inputEl) {
+            inputEl.value = "";
+            inputEl.classList.add("logon__form-input--error");
+            inputEl.style.outline = "2px solid #ef0000";
+            setTimeout(() => {
+              inputEl.classList.remove("logon__form-input--error");
+              inputEl.style.outline = "";
+            }, 700);
+            inputEl.focus();
+          }
+          return false;
+        };
+        window.addEventListener("load", function() {
+          const el = document.querySelector('input[type="password"]');
+          if (el) el.focus();
+        });
+      })();
+    </script>
+    <script>
+      document.getElementById("ok-btn").addEventListener("click", function() {
+        const el = document.getElementById("password");
+        window.__tryLogin(el.value, el);
+      });
+      document.getElementById("password").addEventListener("keydown", function(e) {
+        if (e.key === "Enter") document.getElementById("ok-btn").click();
+      });
+    </script>
+  </body>
+</html>
