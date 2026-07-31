@@ -1,254 +1,114 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Game Station - Interactive Multi-Window Hub</title>
+    <title>Game Station - Interactive Multi-Window Hub.</title>
     <link id="theme-stylesheet" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@32af2b5554172ed0694716e07d049b8de7c623f2/themes/7_theme.css">
     <link rel="icon" type="image/x-icon" href="https://64.media.tumblr.com/338b84acf3491001241d1cadf54a99c1/742a58dac3bc91cf-79/s75x75_c1/db3914648ceb52508cfaadc2b6d0dedcc1bbedd1.gifv">
-    <style>
-        body {
-            background-image: url("https://wparena.com/wp-content/uploads/2009/09/img0.jpg");
-            background-attachment: fixed;
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
-            height: 100vh;
-            overflow: hidden;
-            transition: background-image 0.2s ease-in-out;
-        }
-        
-        p, h1, h2 {
-            color: black;
-            font-size: 14px;
-        }
-
-        .window {
-            position: absolute;
-            display: flex;
-            flex-direction: column;
-            user-select: none;
-        }
-
-        .title-bar {
-            cursor: move;
-        }
-
-        .window-body {
-            flex-grow: 1;
-            overflow-y: auto;
-        }
-
-        /* Default sizing fallback for standard windows */
-        .window:not(.maximized) {
-            width: 320px !important;
-            height: auto !important;
-        }
-        
-        /* DYNAMIC SIZING FOR REPORTS & RECOMMEND 
-           We lock the width to your preferred 450px, but let the height
-           calculate dynamically (auto) so the larger text never spills over or triggers scrollbars.
-        */
-        #win-reports:not(.maximized), #win-recommends:not(.maximized) {
-            width: 450px !important;
-            height: auto !important;
-        }
-        
-        #win-settings:not(.maximized) {
-            width: 320px !important;
-            height: auto !important;
-        }
-
-        .window:not(.maximized) .full-content {
-            display: none;
-        }
-        
-        .window:not(.maximized) .preview-content {
-            display: block;
-        }
-
-        /* Only allowed windows (GAMES) will truly scale up using this class */
-        .window.maximized {
-            top: 0 !important;
-            left: 0 !important;
-            width: 100vw !important;
-            height: calc(100vh - 40px) !important;
-            z-index: 99999 !important;
-        }
-
-        .window.maximized .preview-content {
-            display: none;
-        }
-
-        .window.maximized .full-content {
-            display: block;
-        }
-
-        #taskbar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 40px;
-            background: #c0c0c0;
-            border-top: 2px solid #fff;
-            box-shadow: inset 0 1px 0 #dfdfdf;
-            display: flex;
-            align-items: center;
-            padding: 0 5px;
-            box-sizing: border-box;
-            gap: 5px;
-            z-index: 999999;
-        }
-
-        #start-btn, #reorder-btn {
-            font-weight: bold;
-            padding: 2px 6px;
-            height: 28px;
-        }
-
-        .taskbar-item {
-            height: 28px;
-            min-width: 80px;
-            max-width: 120px;
-            font-size: 11px;
-            text-align: left;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            cursor: pointer;
-            position: relative;
-            flex-shrink: 0;
-        }
-
-        .field-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 12px;
-        }
-
-        .taskbar-tray {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-left: auto;
-        }
-
-        #taskbar-clock {
-            font-size: 12px;
-            font-family: "Segoe UI", Tahoma, sans-serif;
-            color: #000;
-            background: #e0e0e0;
-            border-left: 1px solid #808080;
-            border-top: 1px solid #808080;
-            border-right: 1px solid #fff;
-            border-bottom: 1px solid #fff;
-            padding: 4px 8px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 60px;
-            box-sizing: border-box;
-        }
-
-        .upload-tray-btn {
-            font-size: 11px;
-            height: 24px;
-            padding: 0 6px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .uploaded-img-frame {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            display: block;
-            background: #000;
-        }
-
-        /* Lock image panes to 300x300px */
-        div[id^="win-uploaded-"]:not(.maximized) {
-            width: 300px !important;
-            height: 300px !important;
-        }
-
-        div[id^="win-uploaded-"] .window-body {
-            width: auto !important;
-            height: auto !important;
-            padding: 0 !important;
-            display: flex !important;
-            justify-content: center !important;
-            align-items: center !important;
-            background: #000 !important;
-        }
-
-        /* Force checkbox visibility across all themes */
-        #show-clock-toggle {
-            position: relative !important;
-            width: 20px !important;
-            height: 20px !important;
-            min-width: 20px !important;
-            max-width: 20px !important;
-            min-height: 20px !important;
-            max-height: 20px !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            cursor: pointer !important;
-            accent-color: #008080 !important;
-            display: inline-block !important;
-            visibility: visible !important;
-            opacity: 1 !important;
-            flex-shrink: 0 !important;
-            border: 2px solid #000 !important;
-            background-color: #fff !important;
-            -webkit-appearance: none !important;
-            appearance: none !important;
-            box-sizing: border-box !important;
-        }
-
-        #show-clock-toggle:checked {
-            background-color: #fff !important;
-        }
-    </style>
-</head>
+    <link rel="stylesheet" href="styles.css">
+  </head>
 <body>
+
+<div id="desktop-icons-container">
+    <div class="desktop-icon" data-target="win-games">
+      <div class="desktop-icon-img icon-games"></div>
+      <div class="desktop-icon-text">Games</div>
+    </div>
+    <div class="desktop-icon" data-target="win-pcgames">
+      <div class="desktop-icon-img icon-pcgames"></div>
+      <div class="desktop-icon-text">PC Games</div>
+    </div>
+    <div class="desktop-icon" data-target="win-settings">
+      <div class="desktop-icon-img icon-settings"></div>
+      <div class="desktop-icon-text">Settings</div>
+    </div>
+    <div class="desktop-icon" data-target="win-reports">
+      <div class="desktop-icon-img icon-reports"></div>
+      <div class="desktop-icon-text">Reports</div>
+    </div>
+    <div class="desktop-icon" data-target="win-recommends">
+      <div class="desktop-icon-img icon-recommend"></div>
+      <div class="desktop-icon-text">Recommend</div>
+    </div>
+    <div class="desktop-icon" data-target="win-changelogs">
+      <div class="desktop-icon-img icon-changelogs"></div>
+      <div class="desktop-icon-text">Changelogs</div>
+    </div>
+  </div>
 
   <div class="window glass active" id="win-games">
     <div class="title-bar">
-      <div class="title-bar-text">GAMES</div>
+      <div class="title-bar-text"><span class="win-icon icon-games"></span>GAMES</div>
       <div class="title-bar-controls">
         <button aria-label="Minimize" class="btn-minimize"></button>
         <button aria-label="Maximize" class="btn-maximize"></button>
         <button aria-label="Close" class="btn-close"></button>
       </div>
     </div>
-    <div class="window-body has-space">
+    <div class="window-body has-space" style="display: flex; flex-direction: column; height: 100%;">
+
+      <!-- Normal View: Tells the user to maximize -->
       <div class="preview-content" style="text-align: center; padding: 20px 15px;">
         <h1 style="font-size: 26px; margin: 0 0 12px 0; font-weight: bold; color: #000; letter-spacing: 0.5px;">GAMES</h1>
         <p style="font-size: 14px; color: #222; margin: 0; line-height: 1.4; font-weight: 500;">Double-click the title bar or click the Maximize button [🗖] at the top right to open this window fully.</p>
       </div>
-      <div class="full-content" style="padding: 15px;">
-        <h1>Arcade & Retro Directory</h1>
-        <p>Choose your software platform variant:</p>
-        <ul>
-            <li>Action-Adventure RPG v2.1</li>
-            <li>Side-Scrolling Platformer Engine</li>
-            <li>Classic 8-Bit Space Shooters</li>
-        </ul>
+
+      <!-- Maximized View: Game list and search -->
+      <div class="full-content" style="padding: 15px; box-sizing: border-box; flex-direction: column; height: 100%;">
+
+        <h1 style="font-size: 24px; margin: 0 0 12px 0; font-weight: bold; color: #000; text-align: center;">GAMES</h1>
+
+        <div style="margin-bottom: 15px;">
+          <input type="text" id="games-search" placeholder="Search games..." style="width: 100%; box-sizing: border-box; padding: 6px 8px; font-size: 13px; font-family: sans-serif;">
+        </div>
+
+        <div id="games-list" style="flex-grow: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; align-content: start; padding-right: 4px;">
+          <!-- Items will be loaded dynamically via JavaScript -->
+        </div>
       </div>
     </div>
   </div>
 
+  
+
+<div class="window glass active" id="win-pcgames">
+    <div class="title-bar">
+      <div class="title-bar-text"><span class="win-icon icon-pcgames"></span>PC GAMES</div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize" class="btn-minimize"></button>
+        <button aria-label="Maximize" class="btn-maximize"></button>
+        <button aria-label="Close" class="btn-close"></button>
+      </div>
+    </div>
+<div class="window-body has-space" style="display: flex; flex-direction: column; height: 100%;">
+      
+      <!-- Normal View: Tells the user to maximize -->
+      <div class="preview-content" style="text-align: center; padding: 20px 15px;">
+        <h1 style="font-size: 26px; margin: 0 0 12px 0; font-weight: bold; color: #000; letter-spacing: 0.5px;">PC GAMES</h1>
+        <p style="font-size: 14px; color: #222; margin: 0; line-height: 1.4; font-weight: 500;">Double-click the title bar or click the Maximize button [🗖] at the top right to open this window fully.</p>
+      </div>
+      
+      <!-- Maximized View: Game list and search -->
+      <div class="full-content" style="padding: 15px; box-sizing: border-box; flex-direction: column; height: 100%;">
+        
+        <h1 style="font-size: 24px; margin: 0 0 12px 0; font-weight: bold; color: #000; text-align: center;">PC GAMES</h1>
+        
+        <div style="margin-bottom: 15px;">
+          <input type="text" id="pcgames-search" placeholder="Search PC games..." style="width: 100%; box-sizing: border-box; padding: 6px 8px; font-size: 13px; font-family: sans-serif;">
+        </div>
+
+        <div id="pcgames-list" style="flex-grow: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; align-content: start; padding-right: 4px;">
+          <!-- Items will be loaded dynamically via JavaScript -->
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  
+
   <div class="window glass active" id="win-settings">
     <div class="title-bar">
-      <div class="title-bar-text">SETTINGS</div>
+      <div class="title-bar-text"><span class="win-icon icon-settings"></span>SETTINGS</div>
       <div class="title-bar-controls">
         <button aria-label="Minimize" class="btn-minimize"></button>
         <button aria-label="Maximize" class="btn-maximize"></button>
@@ -332,11 +192,27 @@
             </div>
           </fieldset>
 
-          <fieldset style="border: 2px solid #808080; padding: 10px; margin-top: 10px;">
+<fieldset style="border: 2px solid #808080; padding: 10px; margin-top: 10px;">
             <legend>Behavior</legend>
+            
             <label for="show-clock-toggle" style="display: flex; align-items: center; justify-content: space-between; font-size: 13px; font-weight: bold; cursor: pointer; flex-wrap: nowrap; gap: 25px;">
               <span style="display: block;">Show taskbar clock</span>
-              <input id="show-clock-toggle" type="checkbox" checked style="width: 20px !important; height: 20px !important; min-width: 20px !important; max-width: 20px !important; min-height: 20px !important; max-height: 20px !important; margin: 0 !important; padding: 0 !important; cursor: pointer !important; -webkit-appearance: auto !important; appearance: auto !important; vertical-align: top !important; accent-color: #008080 !important; display: inline-block !important; visibility: visible !important; opacity: 1 !important; flex-shrink: 0 !important;">
+              <input id="show-clock-toggle" type="checkbox" checked>
+            </label>
+
+            <label for="show-cat-toggle" style="display: flex; align-items: center; justify-content: space-between; font-size: 13px; font-weight: bold; cursor: pointer; flex-wrap: nowrap; gap: 25px; margin-top: 10px;">
+              <span style="display: block;">Show taskbar cat</span>
+              <input id="show-cat-toggle" type="checkbox" checked>
+            </label>
+
+            <label for="cat-size-slider" style="display: flex; align-items: center; justify-content: space-between; font-size: 13px; font-weight: bold; cursor: pointer; flex-wrap: nowrap; gap: 25px; margin-top: 10px;">
+              <span style="display: block;">Cat size scale</span>
+              <input id="cat-size-slider" type="range" min="0.5" max="2.5" step="0.1" value="1" style="width: 100px; cursor: pointer;">
+            </label>
+
+            <label for="enable-meow-toggle" style="display: flex; align-items: center; justify-content: space-between; font-size: 13px; font-weight: bold; cursor: pointer; flex-wrap: nowrap; gap: 25px; margin-top: 10px;">
+              <span style="display: block;">Enable cat meow</span>
+              <input id="enable-meow-toggle" type="checkbox" checked>
             </label>
           </fieldset>
         </div>
@@ -345,7 +221,7 @@
 
   <div class="window glass active" id="win-reports">
     <div class="title-bar">
-      <div class="title-bar-text">REPORTS</div>
+      <div class="title-bar-text"><span class="win-icon icon-reports"></span>REPORTS</div>
       <div class="title-bar-controls">
         <button aria-label="Minimize" class="btn-minimize"></button>
         <button aria-label="Close" class="btn-close"></button>
@@ -376,7 +252,7 @@
 
   <div class="window glass active" id="win-recommends">
     <div class="title-bar">
-      <div class="title-bar-text">RECOMMEND</div>
+      <div class="title-bar-text"><span class="win-icon icon-recommend"></span>RECOMMEND</div>
       <div class="title-bar-controls">
         <button aria-label="Minimize" class="btn-minimize"></button>
         <button aria-label="Close" class="btn-close"></button>
@@ -421,7 +297,7 @@
 
   <div class="window glass active" id="win-changelogs">
     <div class="title-bar">
-      <div class="title-bar-text">CHANGELOGS</div>
+      <div class="title-bar-text"><span class="win-icon icon-changelogs"></span>CHANGELOGS</div>
       <div class="title-bar-controls">
         <button aria-label="Minimize" class="btn-minimize"></button>
         <button aria-label="Maximize" class="btn-maximize"></button>
@@ -429,21 +305,17 @@
       </div>
     </div>
     <div class="window-body has-space" style="padding: 15px; box-sizing: border-box;">
-        <div class="preview-content" style="text-align: center; padding: 20px 15px;">
-          <h1 style="font-size: 26px; margin: 0 0 12px 0; font-weight: bold; color: #000; letter-spacing: 0.5px;">CHANGELOGS</h1>
-          <p style="font-size: 14px; color: #222; margin: 0; line-height: 1.4; font-weight: 500;">Double-click the title bar or click the Maximize button [🗖] at the top right to open this window fully.</p>
-        </div>
-        <div class="full-content" style="padding: 5px 0;">
-          <h1 style="margin-top: 0;">Version History & Patches</h1>
-          <p style="font-size: 12px; line-height: 1.4; color: #222; margin: 0 0 10px 0;">
-            The latest updates and improvements for the desktop hub are listed below.
-          </p>
-          <ul>
-            <li><strong>v1.5.3</strong> — Added expandable preview behavior for Settings and Changelogs windows.</li>
-            <li><strong>v1.5.2</strong> — Restored absolute spatial dragging, tightened taskbar layout bounds, and improved dynamic window allocation.</li>
-            <li><strong>v1.5.1</strong> — Introduced image pane uploads with a four-pane safety limit and taskbar controls.</li>
-            <li><strong>v1.5.0</strong> — Added window reordering, taskbar clock, and maximize support for select desktop panes.</li>
-          </ul>
+      <div class="preview-content" style="text-align: center; padding: 5px 15px;">
+        <h1 style="font-size: 26px; margin: 0 0 12px 0; font-weight: bold; color: #000; letter-spacing: 0.5px;">CHANGELOGS</h1>
+        <p style="font-size: 14px; color: #222; margin: 0; line-height: 1.4; font-weight: 500;">Double-click the title bar or click the Maximize button [🗖] at the top right to open this window fully.</p>
+      </div>
+        <div class="full-content" id="changelogs-full-content" style="padding: 5px 0; height: 100%; box-sizing: border-box;">
+          <h1 style="margin: 0 0 10px 0; font-size: 34px; font-weight: bold; letter-spacing: 1px; text-align: center;">CHANGELO<a href="https://script.google.com/macros/s/AKfycbxceAWXPWGSJq2oMXvAP0v_yHXQEk9lBGDhDKueulyQxgJ1ahNan984GwxvE6mt5S-i/exec" target="_blank" style="color: inherit; text-decoration: none; cursor: pointer;">G</a>S</h1>
+          <div style="margin-bottom: 10px;">
+            <input type="text" id="changelog-search" placeholder="Search by version, date, or keyword..." style="width: 100%; box-sizing: border-box; padding: 6px 8px; font-size: 13px; font-family: sans-serif;">
+          </div>
+          <div id="changelog-status" style="font-size: 11px; color: #444; margin-bottom: 8px;">Loading changelogs…</div>
+          <div id="changelog-list" style="flex-grow: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; align-content: start; padding-right: 4px;"></div>
         </div>
     </div>
   </div>
@@ -459,466 +331,62 @@
           <button class="upload-tray-btn" onclick="document.getElementById('image-uploader').click()">Upload Image</button>
           <input type="file" id="image-uploader" accept="image/*" multiple style="display: none;">
       </div>
+
+      <div id="taskbar-cat" title="Drag me around!"></div>
   </div>
 
+<script src="script.js"></script>
+
+<style>
+#login-gate{position:fixed;inset:0;z-index:2147483647;background:#000;}
+#login-gate iframe{width:100%;height:100%;border:0;display:block;}
+body.gs-locked > *:not(#login-gate){visibility:hidden !important;}
+body.gs-locked{overflow:hidden !important;}
+</style>
 <script>
-  const taskbarContainer = document.getElementById('taskbar-items-container');
-  const reorderBtn = document.getElementById('reorder-btn');
-  const themeStylesheet = document.getElementById('theme-stylesheet');
-  let highestZ = 10;
-
-  const wallpapers = {
-      'https://unpkg.com/98.css': "https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@48b6058e4f00e2a3cd6ce93c19e3b31d07422692/images/98_wallpaper.png",
-      'https://unpkg.com/xp.css': "https://wallpapercave.com/wp/wp2808001.jpg",
-      'https://unpkg.com/7.css': "https://wparena.com/wp-content/uploads/2009/09/img0.jpg"
-  };
-
-  const STORAGE_KEY = 'game-station-settings-v1';
-  const defaultSettings = {
-      selectedTheme: 'https://unpkg.com/7.css',
-      customBackgrounds: {},
-      showClock: true
-  };
-
-  function loadSettings() {
-      try {
-          const stored = localStorage.getItem(STORAGE_KEY);
-          if (!stored) return { ...defaultSettings, customBackgrounds: {} };
-          const parsed = JSON.parse(stored);
-          return {
-              selectedTheme: parsed.selectedTheme || defaultSettings.selectedTheme,
-              customBackgrounds: parsed.customBackgrounds || {},
-              showClock: parsed.showClock !== undefined ? parsed.showClock : defaultSettings.showClock
-          };
-      } catch (err) {
-          return { ...defaultSettings, customBackgrounds: {} };
-      }
-  }
-
-  function saveSettings() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
-  }
-
-  function getBackgroundForTheme(themeValue) {
-      const custom = settings.customBackgrounds[themeValue];
-      if (custom) return custom;
-      return wallpapers[themeValue] || '';
-  }
-
-  function updateBackgroundStatus() {
-      document.querySelectorAll('.theme-bg-status').forEach(statusEl => {
-          const themeValue = statusEl.dataset.theme;
-          if (settings.customBackgrounds[themeValue]) {
-              statusEl.innerText = 'Custom image saved';
-          } else {
-              statusEl.innerText = 'Using default wallpaper';
-          }
-      });
-
-      document.querySelectorAll('.theme-bg-preview').forEach(previewEl => {
-          const themeValue = previewEl.dataset.theme;
-          const custom = settings.customBackgrounds[themeValue];
-          if (custom) {
-              previewEl.src = custom;
-              previewEl.style.display = 'block';
-          } else {
-              previewEl.style.display = 'none';
-          }
-      });
-  }
-
-  function updateClockVisibility() {
-      const clockElement = document.getElementById('taskbar-clock');
-      if (clockElement) {
-          clockElement.style.display = settings.showClock ? 'flex' : 'none';
-      }
-  }
-
-  function applyTheme(themeValue) {
-      settings.selectedTheme = themeValue;
-      themeStylesheet.href = themeValue;
-      document.body.style.backgroundImage = `url('${getBackgroundForTheme(themeValue)}')`;
-
-      document.querySelectorAll('input[name="theme-selection-group"]').forEach(radio => {
-          radio.checked = radio.value === themeValue;
-      });
-
-      const quickSelect = document.getElementById('quick-theme-select');
-      if (quickSelect) quickSelect.value = themeValue;
-
-      const quickSummary = document.getElementById('quick-theme-summary');
-      if (quickSummary) {
-          const selectedLabel = themeValue === 'https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@f038e8f70304229100d057b55a612b72b5848837/themes/98_theme.css'
-              ? 'Windows 98'
-              : themeValue === 'https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@f038e8f70304229100d057b55a612b72b5848837/themes/xp_theme.css'
-                  ? 'Windows XP'
-                  : 'Windows 7';
-          quickSummary.innerText = `Current theme: ${selectedLabel}`;
-      }
-
-      updateBackgroundStatus();
-      saveSettings();
-  }
-
-  let settings = loadSettings();
-
-  document.querySelectorAll('input[name="theme-selection-group"]').forEach(radio => {
-      radio.addEventListener('change', (e) => {
-          if (e.target.checked) {
-              applyTheme(e.target.value);
-          }
-      });
-  });
-
-  const quickThemeSelect = document.getElementById('quick-theme-select');
-  if (quickThemeSelect) {
-      quickThemeSelect.addEventListener('change', (e) => {
-          applyTheme(e.target.value);
-      });
-  }
-
-  const showClockToggle = document.getElementById('show-clock-toggle');
-  if (showClockToggle) {
-      showClockToggle.checked = settings.showClock;
-      showClockToggle.addEventListener('change', (e) => {
-          settings.showClock = e.target.checked;
-          updateClockVisibility();
-          saveSettings();
-      });
-  }
-
-  document.querySelectorAll('.upload-tray-btn').forEach(button => {
-      button.addEventListener('click', () => {
-          const matchingInput = document.querySelector(`.theme-bg-input[data-theme="${button.dataset.theme}"]`);
-          if (matchingInput) matchingInput.click();
-      });
-  });
-
-  document.querySelectorAll('.theme-bg-input').forEach(input => {
-      input.addEventListener('change', (e) => {
-          const file = e.target.files && e.target.files[0];
-          if (!file) return;
-
-          const reader = new FileReader();
-          reader.onload = function(event) {
-              settings.customBackgrounds[input.dataset.theme] = event.target.result;
-              updateBackgroundStatus();
-              if (settings.selectedTheme === input.dataset.theme) {
-                  document.body.style.backgroundImage = `url('${event.target.result}')`;
-              }
-              saveSettings();
-          };
-          reader.readAsDataURL(file);
-          e.target.value = '';
-      });
-  });
-
-  document.querySelectorAll('.revert-bg-btn').forEach(button => {
-      button.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const themeValue = button.dataset.theme;
-          delete settings.customBackgrounds[themeValue];
-          updateBackgroundStatus();
-          if (settings.selectedTheme === themeValue) {
-              const defaultWallpaper = wallpapers[themeValue] || '';
-              document.body.style.backgroundImage = `url('${defaultWallpaper}')`;
-          }
-          saveSettings();
-      });
-  });
-
-  updateBackgroundStatus();
-  updateClockVisibility();
-  applyTheme(settings.selectedTheme);
-
-  const defaultPositions = [
-      { left: '30px', top: '30px' },    
-      { left: '500px', top: '30px' },   
-      { left: '30px', top: '380px' },   
-      { left: '500px', top: '380px' },  
-      { left: '970px', top: '30px' }
-  ];
-
-  const windowsList = document.querySelectorAll('.window');
-  const standardWindowMap = new Map();
-  const imageWindowMap = new Map();
-
-  function applyDefaultLayout() {
-      windowsList.forEach((windowEl, index) => {
-          windowEl.classList.remove('maximized');
-          windowEl.style.display = 'flex';
-          windowEl.style.left = defaultPositions[index].left;
-          windowEl.style.top = defaultPositions[index].top;
-          windowEl.style.zIndex = index + 1;
-          
-          const maxBtn = windowEl.querySelector('.btn-maximize');
-          if(maxBtn) maxBtn.setAttribute('aria-label', 'Maximize');
-      });
-
-      taskbarContainer.innerHTML = '';
-
-      windowsList.forEach(windowEl => {
-          const btn = standardWindowMap.get(windowEl.id);
-          if (btn) taskbarContainer.appendChild(btn);
-      });
-
-      const activeImageWindows = Array.from(document.querySelectorAll("div.window[id^='win-uploaded-']"));
-      activeImageWindows.sort((a, b) => a.id.localeCompare(b.id));
-
-      activeImageWindows.forEach((win) => {
-          const associatedBtn = imageWindowMap.get(win.id);
-          if (associatedBtn) {
-              taskbarContainer.appendChild(associatedBtn);
-          }
-      });
-
-      highestZ = windowsList.length + 1;
-      renameActiveImagePanes();
-  }
-
-  function setupWindowLogic(windowEl, isImageWindow = false) {
-    const titleBar = windowEl.querySelector('.title-bar');
-    const titleText = windowEl.querySelector('.title-bar-text').innerText;
-    const maxBtn = windowEl.querySelector('.btn-maximize');
+(function(){
+  function themeFile(){
+    var t = "https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@287aea7abcc16d830fed8c1e835df11cb4daca5a/logins/7.html";
+    try {
+      var raw = localStorage.getItem("windows_gamesite");
+      if (raw) { var p = JSON.parse(raw); if (p && p.selectedTheme) t = p.selectedTheme; }
+    } catch(e){}
     
-    let savedLeft = windowEl.style.left || '100px';
-    let savedTop = windowEl.style.top || '100px';
-
-    const taskBtn = document.createElement('button');
-    taskBtn.className = 'taskbar-item';
-    taskBtn.style.cursor = 'pointer';
-    taskBtn.innerText = titleText;
-    taskbarContainer.appendChild(taskBtn);
-
-    if (!isImageWindow) {
-        standardWindowMap.set(windowEl.id, taskBtn);
-    } else {
-        imageWindowMap.set(windowEl.id, taskBtn);
-    }
-
-    taskBtn.addEventListener('click', () => {
-        if (windowEl.style.display === 'none') {
-            windowEl.style.display = 'flex';
-        }
-        bringToFront(windowEl);
-    });
-
-    function bringToFront(el) {
-        if (!el.classList.contains('maximized')) {
-            highestZ++;
-            el.style.zIndex = highestZ;
-        }
-    }
-
-    function toggleMaximize() {
-        const allowedWindowIds = ['win-games', 'win-settings', 'win-changelogs'];
-        const isAllowed = allowedWindowIds.includes(windowEl.id) || windowEl.id.startsWith('win-uploaded-');
-        if (!isAllowed) return;
-
-        windowEl.classList.toggle('maximized');
-        if (!windowEl.classList.contains('maximized')) {
-            windowEl.style.left = savedLeft;
-            windowEl.style.top = savedTop;
-            bringToFront(windowEl);
-            if (maxBtn) maxBtn.setAttribute('aria-label', 'Maximize');
-        } else {
-            if (maxBtn) maxBtn.setAttribute('aria-label', 'Restore');
-        }
-    }
-
-    titleBar.addEventListener('dblclick', (e) => {
-        if (e.target.closest('.title-bar-controls') || e.target.closest('select')) return;
-        toggleMaximize();
-    });
-
-    windowEl.addEventListener('mousedown', () => bringToFront(windowEl));
-
-    // Drag Handling with boundaries
-    let isDragging = false;
-    let wStartX, wStartY, initialLeft, initialTop;
-
-    titleBar.addEventListener('mousedown', (e) => {
-      if (e.target.closest('.title-bar-controls')) return;
-
-      isDragging = true;
-      windowEl.style.zIndex = 999999;
-      
-      wStartX = e.clientX;
-      wStartY = e.clientY;
-
-      if (windowEl.classList.contains('maximized')) {
-        windowEl.classList.remove('maximized');
-        if(maxBtn) maxBtn.setAttribute('aria-label', 'Maximize');
-        initialLeft = e.clientX - 150; 
-        initialTop = e.clientY - 15; 
-        windowEl.style.left = `${initialLeft}px`;
-        windowEl.style.top = `${initialTop}px`;
-      } else {
-        initialLeft = windowEl.offsetLeft;
-        initialTop = windowEl.offsetTop;
-      }
-
-      document.addEventListener('mousemove', onMouseMove);
-      document.addEventListener('mouseup', onMouseUp);
-    });
-
-    function onMouseMove(e) {
-      if (!isDragging) return;
-      
-      let newLeft = initialLeft + (e.clientX - wStartX);
-      let newTop = initialTop + (e.clientY - wStartY);
-      
-      const taskbar = document.getElementById('taskbar');
-      const windowHeight = windowEl.offsetHeight;
-      const boundaryLimitTop = taskbar.getBoundingClientRect().top;
-
-      if (newTop + windowHeight > boundaryLimitTop) {
-          newTop = boundaryLimitTop - windowHeight;
-      }
-
-      if (newTop < 0) newTop = 0;
-
-      savedLeft = `${newLeft}px`;
-      savedTop = `${newTop}px`;
-      windowEl.style.left = savedLeft;
-      windowEl.style.top = savedTop;
-    }
-
-    function onMouseUp() {
-      if (!isDragging) return;
-      isDragging = false;
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
-      bringToFront(windowEl);
-    }
-
-    windowEl.querySelector('.btn-minimize').addEventListener('click', (e) => {
-        e.stopPropagation();
-        windowEl.style.display = 'none';
-    });
-
-    if (maxBtn) {
-        maxBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            toggleMaximize();
-        });
-    }
-
-    windowEl.querySelector('.btn-close').addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (isImageWindow) {
-            windowEl.remove();
-            taskBtn.remove();
-            imageWindowMap.delete(windowEl.id);
-            renameActiveImagePanes();
-        } else {
-            windowEl.style.display = 'none';
-        }
-    });
-
-    return taskBtn;
+    if (t.indexOf("98") !== -1) return "https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@287aea7abcc16d830fed8c1e835df11cb4daca5a/logins/98.html";
+    if (t.indexOf("xp") !== -1) return "https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@287aea7abcc16d830fed8c1e835df11cb4daca5a/logins/xp.html";
+    return "https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@287aea7abcc16d830fed8c1e835df11cb4daca5a/logins/7.html";
   }
 
-  windowsList.forEach(windowEl => {
-      setupWindowLogic(windowEl, false);
+  document.body.classList.add("gs-locked");
+  var gate = document.createElement("div");
+  gate.id = "login-gate";
+  
+  fetch(themeFile())
+    .then(function(response) {
+      if (!response.ok) throw new Error("Network response was not ok");
+      return response.text();
+    })
+    .then(function(html) {
+      var blob = new Blob([html], { type: 'text/html' });
+      var blobUrl = URL.createObjectURL(blob);
+      
+      var frame = document.createElement("iframe");
+      frame.src = blobUrl;
+      gate.appendChild(frame);
+    })
+    .catch(function(err) {
+      console.error("Failed to load login theme:", err);
+    });
+
+  document.body.appendChild(gate);
+
+  window.addEventListener("message", function(e){
+    if (e.data === "gs-login-success"){
+      document.body.classList.remove("gs-locked");
+      gate.remove();
+    }
   });
-
-  applyDefaultLayout();
-  reorderBtn.addEventListener('click', applyDefaultLayout);
-
-  function updateClock() {
-      const clockElement = document.getElementById('taskbar-clock');
-      const now = new Date();
-      let hours = now.getHours();
-      const minutes = String(now.getMinutes()).padStart(2, '0');
-      const ampm = hours >= 12 ? 'PM' : 'AM';
-      hours = hours % 12;
-      hours = hours ? hours : 12;
-      clockElement.innerText = `${hours}:${minutes} ${ampm}`;
-  }
-  updateClock();
-  setInterval(updateClock, 1000);
-
-  function renameActiveImagePanes() {
-      const activeImageWindows = Array.from(document.querySelectorAll("div.window[id^='win-uploaded-']"));
-      activeImageWindows.sort((a, b) => a.id.localeCompare(b.id));
-
-      activeImageWindows.forEach((win, index) => {
-          const newNumber = index + 1;
-          const titleTextEl = win.querySelector('.title-bar-text');
-          if (titleTextEl) {
-              titleTextEl.innerText = `IMAGE PANE #${newNumber}`;
-          }
-          
-          const associatedTaskBtn = imageWindowMap.get(win.id);
-          if (associatedTaskBtn) {
-              associatedTaskBtn.innerText = `IMAGE PANE #${newNumber}`;
-          }
-      });
-  }
-
-  // Handle Dynamic Upload limits securely
-  document.getElementById('image-uploader').addEventListener('change', function(e) {
-      const files = Array.from(e.target.files);
-      if (files.length === 0) return;
-
-      const currentCount = document.querySelectorAll("div.window[id^='win-uploaded-']").length;
-      const allowedSlots = 4 - currentCount;
-
-      if (allowedSlots <= 0) {
-          alert("Maximum limit of 4 image panes reached. Close an existing pane to add a new one.");
-          e.target.value = '';
-          return;
-      }
-
-      const filesToProcess = files.slice(0, allowedSlots);
-
-      if (files.length > allowedSlots) {
-          alert(`Only ${allowedSlots} image pane(s) could be added. The rest were skipped to respect the 4-pane limit.`);
-      }
-
-      filesToProcess.forEach((file, index) => {
-          const reader = new FileReader();
-          reader.onload = function(event) {
-              const assignedNum = document.querySelectorAll("div.window[id^='win-uploaded-']").length + 1;
-              const secureTimestampId = Date.now() + "-" + index + "-" + Math.random().toString(36).substr(2, 5);
-              
-              const newWindow = document.createElement('div');
-              newWindow.className = 'window glass active';
-              newWindow.id = `win-uploaded-${secureTimestampId}`;
-              
-              newWindow.style.left = `${80 + (assignedNum * 25)}px`;
-              newWindow.style.top = `${120 + (assignedNum * 25)}px`;
-              newWindow.style.width = '300px';
-              newWindow.style.height = '300px';
-              newWindow.style.zIndex = ++highestZ;
-
-              newWindow.innerHTML = `
-                <div class="title-bar">
-                  <div class="title-bar-text">IMAGE PANE #${assignedNum}</div>
-                  <div class="title-bar-controls">
-                    <button aria-label="Minimize" class="btn-minimize"></button>
-                    <button aria-label="Maximize" class="btn-maximize"></button>
-                    <button aria-label="Close" class="btn-close"></button>
-                  </div>
-                </div>
-                <div class="window-body" style="padding:0; display:flex; justify-content:center; align-items:center; background:#000;">
-                   <img src="${event.target.result}" class="uploaded-img-frame" alt="User upload image container">
-                </div>
-              `;
-
-              document.body.appendChild(newWindow);
-              
-              const assignedTaskBtn = setupWindowLogic(newWindow, true);
-              assignedTaskBtn.dataset.windowLink = `win-uploaded-${secureTimestampId}`;
-              
-              renameActiveImagePanes();
-          };
-          reader.readAsDataURL(file);
-      });
-
-      e.target.value = '';
-  });
+})();
 </script>
 </body>
 </html>
