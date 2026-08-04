@@ -45,20 +45,24 @@
           passwordInput.focus();
         });
       })();</script><script>
-  document.addEventListener('DOMContentLoaded', function() {
-      // Find your specific password field and submit button
-      const passwordInput = document.querySelector('.login-screen__password input');
-      const submitBtn = document.querySelector('.login-screen__submit');
-
-      // Check to make sure they exist on the page to prevent errors
-      if (passwordInput && submitBtn) {
-          passwordInput.addEventListener('keypress', function (event) {
-              // If the key pressed is Enter, force the button click
-              if (event.key === 'Enter') {
-                  event.preventDefault(); 
-                  submitBtn.click();      
+  // Listen to all keypresses across the entire page
+  document.addEventListener('keypress', function (event) {
+      
+      // 1. Check if the pressed key is Enter
+      if (event.key === 'Enter') {
+          
+          // 2. Check if the element currently being typed in is the password input
+          if (event.target.matches('.login-screen__password input')) {
+              event.preventDefault(); // Stop default browser behavior
+              
+              // 3. Find the submit button currently on the screen and trigger it
+              const submitBtn = document.querySelector('.login-screen__submit');
+              if (submitBtn) {
+                  submitBtn.click();
+              } else {
+                  console.error("Submit button not found on the page.");
               }
-          });
+          }
       }
   });
 </script></body></html>
