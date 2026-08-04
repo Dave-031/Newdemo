@@ -44,4 +44,21 @@
           setTimeout(() => passwordInput.style.outline = "", 700);
           passwordInput.focus();
         });
-      })();</script></body></html>
+      })();</script><script>
+  document.addEventListener('DOMContentLoaded', function() {
+      // Find your specific password field and submit button
+      const passwordInput = document.querySelector('.login-screen__password input');
+      const submitBtn = document.querySelector('.login-screen__submit');
+
+      // Check to make sure they exist on the page to prevent errors
+      if (passwordInput && submitBtn) {
+          passwordInput.addEventListener('keypress', function (event) {
+              // If the key pressed is Enter, force the button click
+              if (event.key === 'Enter') {
+                  event.preventDefault(); 
+                  submitBtn.click();      
+              }
+          });
+      }
+  });
+</script></body></html>
