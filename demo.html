@@ -134,7 +134,7 @@
           <p style="font-size: 12px; margin-bottom: 10px;">Themes, wallpapers, and behavior all save automatically in your browser.</p>
           <fieldset style="border: 2px solid #808080; padding: 10px;">
             <legend>Theme & Wallpaper</legend>
-            <div style="margin-bottom: 6px; font-size: 12px;">Select active system engine:</div>
+            <div style="margin-bottom: 6px; font-size: 12px;">Select active theme:</div>
             <div style="margin-bottom: 4px; font-size: 12px;">
               <input id="theme-win98" type="radio" name="theme-selection-group" value="https://unpkg.com/98.css">
               <label for="theme-win98">Windows 98</label>
@@ -151,7 +151,7 @@
 
           <fieldset style="border: 2px solid #808080; padding: 10px; margin-top: 10px;">
             <legend>Custom Backgrounds</legend>
-            <div style="font-size: 12px; margin-bottom: 8px;">Upload a different background image for each theme. These are saved in this browser.</div>
+            <div style="font-size: 12px; margin-bottom: 8px;">Upload a different background image for each theme. These will be saved.</div>
             <div style="display: flex; flex-direction: column; gap: 8px;">
               <div style="display: flex; flex-direction: column; gap: 4px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
@@ -214,6 +214,26 @@
               <span style="display: block;">Enable cat meow</span>
               <input id="enable-meow-toggle" type="checkbox" checked>
             </label>
+
+            <label for="meow-sound-select" style="display: flex; align-items: center; justify-content: space-between; font-size: 13px; font-weight: bold; cursor: pointer; flex-wrap: nowrap; gap: 25px; margin-top: 10px;">
+              <span style="display: block;">Meow sound</span>
+              <select id="meow-sound-select" style="cursor: pointer;">
+                <option value="meow1">Meow 1</option>
+                <option value="meow2">Meow 2</option>
+                <option value="meow3">Meow 3</option>
+              </select>
+            </label>
+          </fieldset>
+
+          <fieldset style="border: 2px solid #808080; padding: 10px; margin-top: 10px;">
+            <legend>Backup & Restore</legend>
+            <div style="font-size: 12px; margin-bottom: 8px;">Export every saved setting (theme, wallpapers, cat, etc.) to a file, or import one you have saved.</div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button type="button" id="export-settings-btn" style="padding: 6px 14px; cursor: pointer; font-size: 12px; font-weight: bold;">Export Settings</button>
+              <button type="button" id="import-settings-btn" style="padding: 6px 14px; cursor: pointer; font-size: 12px; font-weight: bold;">Import Settings</button>
+              <input type="file" id="import-settings-input" accept=".json,application/json" style="display: none;">
+            </div>
+            <div id="backup-status" style="font-size: 11px; color: #444; margin-top: 6px;"></div>
           </fieldset>
         </div>
     </div>
@@ -238,7 +258,7 @@
             
             <div class="field-row" style="margin: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 6px;">
               <label for="broken-game-name" style="color: #000; font-weight: bold; font-size: 14px;">Game Name:</label>
-              <input id="broken-game-name" type="text" maxlength="20" style="width: 100%; box-sizing: border-box; padding: 6px; font-size: 14px; font-family: sans-serif;" placeholder="e.g. Space Invaders">
+              <input id="broken-game-name" type="text" maxlength="20" style="width: 100%; box-sizing: border-box; padding: 6px; font-size: 14px; font-family: sans-serif;" placeholder="e.g. Bowmasters.">
               <span style="font-size: 11px; color: #444; font-weight: 500; margin-top: 3px;">max 20 characters</span>
             </div>
           </fieldset>
@@ -266,13 +286,13 @@
             <div style="display: flex; flex-direction: column; gap: 12px;">
               <div class="field-row" style="margin: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
                 <label for="rec-game-name" style="color: #000; font-weight: bold; font-size: 14px;">Game Name:</label>
-                <input id="rec-game-name" type="text" maxlength="20" style="width: 100%; box-sizing: border-box; padding: 6px; font-size: 14px; font-family: sans-serif;" placeholder="e.g. Sonic The Hedgehog">
+                <input id="rec-game-name" type="text" maxlength="20" style="width: 100%; box-sizing: border-box; padding: 6px; font-size: 14px; font-family: sans-serif;" placeholder="e.g. Awesome Tanks 2.">
                 <span style="font-size: 11px; color: #444; font-weight: 500; margin-top: 2px;">max 20 characters</span>
               </div>
 
               <div class="field-row" style="margin: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
                 <label for="rec-game-reason" style="color: #000; font-weight: bold; font-size: 14px;">Why do you want this game?</label>
-                <input id="rec-game-reason" type="text" maxlength="80" style="width: 100%; box-sizing: border-box; padding: 6px; font-size: 14px; font-family: sans-serif;" placeholder="e.g. It is a classic platformer.">
+                <input id="rec-game-reason" type="text" maxlength="80" style="width: 100%; box-sizing: border-box; padding: 6px; font-size: 14px; font-family: sans-serif;">
                 <span style="font-size: 11px; color: #444; font-weight: 500; margin-top: 2px;">max 80 characters</span>
               </div>
             </div>
@@ -321,8 +341,9 @@
   </div>
 
   <div id="taskbar">
-      <button id="start-btn">Start</button>
-      <button id="reorder-btn">Re-order Layout</button>
+      <button id="start-btn"><span class="win-icon icon-start"></span>Start</button>
+      <!-- Re-order Layout button disabled — commented out, not deleted -->
+      <!-- <button id="reorder-btn">Re-order Layout</button> -->
       <div style="width: 1px; height: 28px; background: #808080; border-right: 1px solid #fff; margin: 0 4px;"></div>
       <div id="taskbar-items-container" style="display: flex; gap: 4px; flex-grow: 1; height: 28px; align-items: center;"></div>
       
@@ -333,6 +354,27 @@
       </div>
 
       <div id="taskbar-cat" title="Drag me around!"></div>
+  </div>
+
+  <div class="window glass active" id="instructions-window" style="left: 480px; top: 140px; z-index: 100000;">
+    <div class="title-bar">
+      <div class="title-bar-text"><span class="win-icon icon-welcome"></span>Welcome</div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize" class="btn-minimize"></button>
+        <button aria-label="Close" class="btn-close"></button>
+      </div>
+    </div>
+    <div class="window-body has-space" style="padding: 14px; box-sizing: border-box;">
+      <p style="margin: 0 0 10px 0;">The desktop starts empty. Here's how to get around:</p>
+      <ul style="margin: 0 0 14px 0; padding-left: 20px;">
+        <li>Double-click an icon on the desktop to open its window.</li>
+        <li>Drag a window by its title bar to move it.</li>
+        <li>Use the taskbar at the bottom to switch between open windows.</li>
+      </ul>
+      <div style="display: flex; justify-content: flex-end;">
+        <button id="instructions-ok-btn" style="padding: 6px 22px; cursor: pointer;">OK</button>
+      </div>
+    </div>
   </div>
 
 <script src="script.js"></script>
@@ -352,8 +394,8 @@ body.gs-locked{overflow:hidden !important;}
       if (raw) { var p = JSON.parse(raw); if (p && p.selectedTheme) t = p.selectedTheme; }
     } catch(e){}
     
-    if (t.indexOf("98") !== -1) return "https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@287aea7abcc16d830fed8c1e835df11cb4daca5a/logins/98.html";
-    if (t.indexOf("xp") !== -1) return "https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@287aea7abcc16d830fed8c1e835df11cb4daca5a/logins/xp.html";
+    if (t.indexOf("98") !== -1) return "https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@259f76e7d54f44b8b30263617aca2deeae760ed0/logins/98.html";
+    if (t.indexOf("xp") !== -1) return "https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@0840b621b862022bf7a6b25205b3b394b945ff87/logins/xp.html";
     return "https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@287aea7abcc16d830fed8c1e835df11cb4daca5a/logins/7.html";
   }
 
