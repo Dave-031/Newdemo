@@ -1,5 +1,7 @@
 const taskbarContainer = document.getElementById('taskbar-items-container');
-const reorderBtn = document.getElementById('reorder-btn');
+// Re-order Layout button disabled — element lookup commented out along
+// with everything that referenced it, below.
+// const reorderBtn = document.getElementById('reorder-btn');
 const themeStylesheet = document.getElementById('theme-stylesheet');
 let highestZ = 10;
 
@@ -10,6 +12,7 @@ function getIconClass(windowId) {
   if (windowId === 'win-reports') return 'icon-reports';
   if (windowId === 'win-recommends') return 'icon-recommend';
   if (windowId === 'win-changelogs') return 'icon-changelogs';
+  if (windowId === 'instructions-window') return 'icon-welcome';
   if (windowId.startsWith('win-uploaded-')) return 'icon-image';
   return '';
 }
@@ -27,7 +30,8 @@ const defaultSettings = {
     showClock: true,
     showCat: true,
     catScale: 1,
-    enableMeow: true
+    enableMeow: true,
+    meowSound: 'meow1'
 };
 
 function loadSettings() {
@@ -41,7 +45,8 @@ function loadSettings() {
             showClock: parsed.showClock !== undefined ? parsed.showClock : defaultSettings.showClock,
             showCat: parsed.showCat !== undefined ? parsed.showCat : defaultSettings.showCat,
             catScale: parsed.catScale !== undefined ? parsed.catScale : defaultSettings.catScale,
-            enableMeow: parsed.enableMeow !== undefined ? parsed.enableMeow : defaultSettings.enableMeow
+            enableMeow: parsed.enableMeow !== undefined ? parsed.enableMeow : defaultSettings.enableMeow,
+            meowSound: parsed.meowSound || defaultSettings.meowSound
         };
     } catch (err) {
         return { ...defaultSettings, customBackgrounds: {} };
@@ -81,51 +86,15 @@ function updateBackgroundStatus() {
 }
 
 // --- DESKTOP ICONS LOGIC ---
-const gridWidth = 90;
-const gridHeight = 100;
-const desktopIcons = document.querySelectorAll('.desktop-icon');
-
-// 1. Initialize their starting positions in a grid (top to bottom, left to right)
-let startX = 10;
-let startY = 10;
-const maxScreenHeight = window.innerHeight - 80;
-
-desktopIcons.forEach((icon) => {
-    icon.style.left = `${startX}px`;
-    icon.style.top = `${startY}px`;
-    
-    startY += gridHeight;
-    // Move to the next column if we hit the bottom of the screen
-    if (startY > maxScreenHeight) {
-        startY = 10;
-        startX += gridWidth;
-    }
-});
-
-// 2. Drag and Snap logic
-let draggedIcon = null;
-let dragOffsetX = 0;
-let dragOffsetY = 0;
-
-desktopIcons.forEach(icon => {
+document.querySelectorAll('.desktop-icon').forEach(icon => {
     // Single click: Select the icon
-    icon.addEventListener('mousedown', (e) => {
-        if (e.button !== 0) return; // Only allow left-click dragging
-        
+    icon.addEventListener('click', (e) => {
         document.querySelectorAll('.desktop-icon').forEach(i => i.classList.remove('selected'));
         icon.classList.add('selected');
-        
-        // Start Drag
-        draggedIcon = icon;
-        const rect = icon.getBoundingClientRect();
-        dragOffsetX = e.clientX - rect.left;
-        dragOffsetY = e.clientY - rect.top;
-        
-        icon.style.zIndex = 2; // Slight bump to stay above other icons while dragging
-        e.stopPropagation(); 
+        e.stopPropagation(); // Prevents the body click listener from immediately firing
     });
 
-    // Double click: Open the window
+    // Double click: Open the window and re-add to taskbar
     icon.addEventListener('dblclick', () => {
         const targetId = icon.dataset.target;
         const windowEl = document.getElementById(targetId);
@@ -133,87 +102,21 @@ desktopIcons.forEach(icon => {
         
         if (windowEl && taskBtn) {
             windowEl.style.display = 'flex';
+            // Freshly-opened windows cascade like real Windows; a window the
+            // user has already dragged by hand keeps its remembered spot.
+            if (windowEl.dataset.userMoved !== 'true') {
+                cascadePosition(windowEl);
+            }
+            // If the window was closed (removed from taskbar), add it back
             if (!document.getElementById('taskbar-items-container').contains(taskBtn)) {
                 document.getElementById('taskbar-items-container').appendChild(taskBtn);
             }
+            // Bring window to the front
             highestZ++;
             windowEl.style.zIndex = highestZ;
         }
         icon.classList.remove('selected');
     });
-});
-
-// Handle moving the mouse
-document.addEventListener('mousemove', (e) => {
-    if (!draggedIcon) return;
-    
-    // Move the icon freely with the mouse
-    const newLeft = e.clientX - dragOffsetX;
-    const newTop = e.clientY - dragOffsetY;
-    
-    draggedIcon.style.left = `${newLeft}px`;
-    draggedIcon.style.top = `${newTop}px`;
-});
-
-// Helper function to check if a grid slot is already taken
-function isSlotOccupied(x, y, currentIcon) {
-    const icons = document.querySelectorAll('.desktop-icon');
-    for (let i = 0; i < icons.length; i++) {
-        if (icons[i] === currentIcon) continue;
-        
-        const iconLeft = parseInt(icons[i].style.left, 10);
-        const iconTop = parseInt(icons[i].style.top, 10);
-        
-        // If an icon is found at these exact coordinates, the slot is taken
-        if (iconLeft === x && iconTop === y) {
-            return true;
-        }
-    }
-    return false;
-}
-
-// Handle releasing the mouse and snapping to grid (UPDATED)
-document.addEventListener('mouseup', (e) => {
-    if (!draggedIcon) return;
-    
-    const rect = draggedIcon.getBoundingClientRect();
-    
-    // Calculate nearest grid slot
-    let snappedX = Math.round((rect.left - 10) / gridWidth) * gridWidth + 10;
-    let snappedY = Math.round((rect.top - 10) / gridHeight) * gridHeight + 10;
-    
-    // Prevent dragging off the top or left of the screen
-    if (snappedX < 10) snappedX = 10;
-    if (snappedY < 10) snappedY = 10;
-
-    // --- NEW: Collision detection to prevent stacking ---
-    const maxScreenHeight = window.innerHeight - 80;
-    
-    // While the target slot is taken, find the next open slot
-    while (isSlotOccupied(snappedX, snappedY, draggedIcon)) {
-        snappedY += gridHeight; // Move down one slot
-        
-        // If we hit the bottom of the screen, move to the top of the next column
-        if (snappedY > maxScreenHeight) {
-            snappedY = 10;
-            snappedX += gridWidth;
-        }
-    }
-    // ----------------------------------------------------
-
-    // Apply the final empty snapped position
-    draggedIcon.style.left = `${snappedX}px`;
-    draggedIcon.style.top = `${snappedY}px`;
-    draggedIcon.style.zIndex = ''; // Reset z-index
-
-    draggedIcon = null;
-});
-
-// Deselect icons if you click the empty desktop background
-document.body.addEventListener('mousedown', (e) => {
-    if (!e.target.closest('.desktop-icon')) {
-        document.querySelectorAll('.desktop-icon').forEach(i => i.classList.remove('selected'));
-    }
 });
 
 // Deselect icons if you click the empty desktop background
@@ -222,6 +125,7 @@ document.body.addEventListener('click', (e) => {
         document.querySelectorAll('.desktop-icon').forEach(i => i.classList.remove('selected'));
     }
 });
+
 
 function updateClockVisibility() {
     const clockElement = document.getElementById('taskbar-clock');
@@ -233,7 +137,7 @@ function updateClockVisibility() {
 function updateCatSettings() {
     const catEl = document.getElementById('taskbar-cat');
     if (catEl) {
-        catEl.style.display = settings.showCat ? 'block' : 'none';
+        catEl.style.display = 'block'; // Cat is always visible — do not gate this on settings.showCat
         catEl.style.setProperty('--cat-scale', settings.catScale);
         catEl.style.bottom = ''; // Clears any buggy inline math from the last step
     }
@@ -270,6 +174,7 @@ function applyTheme(themeValue) {
 }
 
 let settings = loadSettings();
+settings.showCat = true; // Taskbar cat is locked visible for now — reserved for a future feature
 
 document.querySelectorAll('input[name="theme-selection-group"]').forEach(radio => {
     radio.addEventListener('change', (e) => {
@@ -298,9 +203,14 @@ if (showClockToggle) {
 
 const showCatToggle = document.getElementById('show-cat-toggle');
 if (showCatToggle) {
-    showCatToggle.checked = settings.showCat;
+    showCatToggle.checked = true; // Cat can't be hidden right now
     showCatToggle.addEventListener('change', (e) => {
-        settings.showCat = e.target.checked;
+        if (!e.target.checked) {
+            e.target.checked = true; // Snap it back on
+            alert("Why would you want to hide the cat? She will stay put for now.");
+            return;
+        }
+        settings.showCat = true;
         updateCatSettings();
         saveSettings();
     });
@@ -324,6 +234,126 @@ if (enableMeowToggle) {
         saveSettings();
     });
 }
+
+// --- START BUTTON EASTER EGG: RANDOM ROLLING/FALLING IMAGES ---
+// Secret trick: click the Start button 10 times in a row and 2 random
+// images from the list below fly across the screen (each one randomly
+// either rolls across or falls down, landing at a random spot). Fill in
+// any/all of the 21 URL slots below — this is not exposed anywhere in the
+// UI, so only someone editing this file can set/find it. Empty slots are
+// simply skipped when picking which images to show.
+const EGG_ROLL_IMAGE_URLS = [
+    '', // 1
+    '', // 2
+    '', // 3
+    '', // 4
+    '', // 5
+    '', // 6
+    '', // 7
+    '', // 8
+    '', // 9
+    '', // 10
+    '', // 11
+    '', // 12
+    '', // 13
+    '', // 14
+    '', // 15
+    '', // 16
+    '', // 17
+    '', // 18
+    '', // 19
+    '', // 20
+    ''  // 21
+];
+
+const EGG_IMAGES_PER_TRIGGER = 2;
+let eggAnimationActive = false; // Locked while any triggered images are still on screen
+let eggImagesInFlight = 0;
+
+function pickRandomUniqueUrls(count) {
+    const pool = EGG_ROLL_IMAGE_URLS.filter(url => url && url.trim() !== '');
+    if (pool.length === 0) return [];
+
+    // Shuffle a copy of the pool (Fisher-Yates) and take the first `count`
+    // entries so the 2 images picked each trigger are random and distinct
+    // (unless the pool itself is smaller than `count`).
+    const shuffled = pool.slice();
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled.slice(0, Math.min(count, shuffled.length));
+}
+
+function spawnSingleEggImage(url) {
+    const isRoll = Math.random() < 0.5;
+    const duration = 3.5 + Math.random() * 2; // 3.5s - 5.5s, so the two images don't move in lockstep
+
+    const img = document.createElement('img');
+    img.src = url;
+    img.alt = '';
+    img.style.animationDuration = `${duration}s`;
+
+    if (isRoll) {
+        img.className = 'egg-roll-image';
+        img.style.top = `${10 + Math.random() * 75}%`; // random vertical spot
+    } else {
+        img.className = 'egg-fall-image';
+        img.style.left = `${5 + Math.random() * 85}%`; // random horizontal spot
+    }
+
+    document.body.appendChild(img);
+    eggImagesInFlight++;
+
+    // Clean up once this image finishes its run across/down the screen.
+    // animationend is the normal path; the timeout is a safety net (e.g.
+    // a broken image URL that never properly starts/finishes the animation).
+    const cleanup = () => {
+        if (img.isConnected) img.remove();
+        eggImagesInFlight = Math.max(0, eggImagesInFlight - 1);
+        if (eggImagesInFlight === 0) eggAnimationActive = false;
+    };
+    img.addEventListener('animationend', cleanup);
+    setTimeout(cleanup, (duration * 1000) + 500);
+}
+
+function spawnEggRollImage() {
+    if (eggAnimationActive) return; // Already running — never overlap triggers.
+
+    const urls = pickRandomUniqueUrls(EGG_IMAGES_PER_TRIGGER);
+    if (urls.length === 0) return; // No URLs filled in — silently do nothing, keeps it secret.
+
+    eggAnimationActive = true;
+    urls.forEach(url => spawnSingleEggImage(url));
+}
+
+(function () {
+    const startBtn = document.getElementById('start-btn');
+    if (!startBtn) return;
+
+    const CLICKS_NEEDED = 10;
+    const CLICK_WINDOW_MS = 4000; // clicks reset the count if they're spaced out this much
+    let clickCount = 0;
+    let resetTimer = null;
+
+    startBtn.addEventListener('click', () => {
+        // Ignore clicks entirely while images are still on screen — this is
+        // what stops someone from mashing the button fast and stacking up
+        // multiple overlapping triggers. They have to wait for the current
+        // run to finish, then click 10 fresh times.
+        if (eggAnimationActive) return;
+
+        clickCount++;
+        clearTimeout(resetTimer);
+        resetTimer = setTimeout(() => { clickCount = 0; }, CLICK_WINDOW_MS);
+
+        if (clickCount >= CLICKS_NEEDED) {
+            clickCount = 0;
+            clearTimeout(resetTimer);
+            spawnEggRollImage();
+        }
+    });
+})();
 
 document.querySelectorAll('.upload-tray-btn').forEach(button => {
     button.addEventListener('click', () => {
@@ -365,30 +395,139 @@ document.querySelectorAll('.revert-bg-btn').forEach(button => {
     });
 });
 
+// --- SETTINGS EXPORT / IMPORT ---
+// Export dumps every key currently in localStorage (not just the app's own
+// settings key) so anything saved in this browser comes along in the file.
+const exportSettingsBtn = document.getElementById('export-settings-btn');
+const importSettingsBtn = document.getElementById('import-settings-btn');
+const importSettingsInput = document.getElementById('import-settings-input');
+const backupStatus = document.getElementById('backup-status');
+
+if (exportSettingsBtn) {
+    exportSettingsBtn.addEventListener('click', () => {
+        try {
+            const allData = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                allData[key] = localStorage.getItem(key);
+            }
+
+            const exportPayload = {
+                exportedFrom: 'Game Station',
+                exportedAt: new Date().toISOString(),
+                localStorage: allData
+            };
+
+            const blob = new Blob([JSON.stringify(exportPayload, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `gamestation-settings-${new Date().toISOString().slice(0, 10)}.json`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+
+            if (backupStatus) backupStatus.innerText = 'Settings exported successfully.';
+        } catch (err) {
+            console.error('Settings export failed:', err);
+            if (backupStatus) backupStatus.innerText = 'Export failed — see console for details.';
+        }
+    });
+}
+
+if (importSettingsBtn && importSettingsInput) {
+    importSettingsBtn.addEventListener('click', () => importSettingsInput.click());
+
+    importSettingsInput.addEventListener('change', (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            try {
+                const parsed = JSON.parse(event.target.result);
+                // Support both the wrapped export format above and a raw
+                // { key: value } localStorage dump, just in case.
+                const dataToImport = (parsed && typeof parsed === 'object' && parsed.localStorage)
+                    ? parsed.localStorage
+                    : parsed;
+
+                if (!dataToImport || typeof dataToImport !== 'object' || Array.isArray(dataToImport)) {
+                    throw new Error('Invalid settings file format.');
+                }
+
+                Object.keys(dataToImport).forEach(key => {
+                    localStorage.setItem(key, dataToImport[key]);
+                });
+
+                if (backupStatus) backupStatus.innerText = 'Settings imported! Reloading…';
+                setTimeout(() => location.reload(), 700);
+            } catch (err) {
+                console.error('Settings import failed:', err);
+                if (backupStatus) backupStatus.innerText = 'Import failed — that file is not a valid settings export.';
+            }
+        };
+        reader.readAsText(file);
+        e.target.value = '';
+    });
+}
+
 updateBackgroundStatus();
 updateClockVisibility();
 applyTheme(settings.selectedTheme);
 updateCatSettings();
 
-const defaultPositions = [
-    { left: '30px', top: '30px' },    
-    { left: '500px', top: '30px' },   
-    { left: '30px', top: '380px' },   
-    { left: '500px', top: '380px' },  
-    { left: '970px', top: '30px' },
-    { left: '970px', top: '380px' }
-];
-
-const windowsList = document.querySelectorAll('.window');
+const windowsList = document.querySelectorAll('.window:not(#instructions-window)');
 const standardWindowMap = new Map();
 const imageWindowMap = new Map();
 
-function applyDefaultLayout() {
+// --- WINDOW CASCADE POSITIONING ---
+// Like real Windows: a freshly-opened window doesn't jump to one fixed
+// spot — it lands offset from whatever's already open so every title bar
+// underneath stays visible. Once a person drags a window by hand,
+// dataset.userMoved is set to 'true' and that window keeps its remembered
+// spot instead of being re-cascaded the next time it's opened.
+const CASCADE_BASE_LEFT = 60;
+const CASCADE_BASE_TOP = 60;
+const CASCADE_STEP = 32;
+const TASKBAR_HEIGHT = 40;
+
+function cascadePosition(windowEl, indexOverride) {
+    const width = windowEl.offsetWidth || 320;
+    const height = windowEl.offsetHeight || 200;
+
+    const maxLeft = Math.max(CASCADE_BASE_LEFT, window.innerWidth - width - 10);
+    const maxTop = Math.max(CASCADE_BASE_TOP, window.innerHeight - TASKBAR_HEIGHT - height - 10);
+    const cascadeRange = Math.max(1, Math.min(maxLeft - CASCADE_BASE_LEFT, maxTop - CASCADE_BASE_TOP));
+
+    let stepIndex = indexOverride;
+    if (stepIndex === undefined) {
+        stepIndex = Array.from(document.querySelectorAll('.window:not(#instructions-window)'))
+            .filter(w => w !== windowEl && w.style.display !== 'none' && !w.classList.contains('maximized'))
+            .length;
+    }
+
+    const offset = (stepIndex * CASCADE_STEP) % cascadeRange;
+
+    windowEl.style.left = `${Math.min(CASCADE_BASE_LEFT + offset, maxLeft)}px`;
+    windowEl.style.top = `${Math.min(CASCADE_BASE_TOP + offset, maxTop)}px`;
+}
+
+function applyDefaultLayout(options = {}) {
+    // `open: false` keeps windows hidden — used on first load so the user
+    // sees a clean desktop instead of every window popping open at once.
+    // `open: true` is "Re-order Layout": an explicit reset, so it cascades
+    // every window fresh and clears any remembered custom positions.
+    const { open = true } = options;
+
     windowsList.forEach((windowEl, index) => {
         windowEl.classList.remove('maximized');
-        windowEl.style.display = (windowEl.id === 'win-pcgames') ? 'all' : 'flex';
-        windowEl.style.left = defaultPositions[index].left;
-        windowEl.style.top = defaultPositions[index].top;
+        windowEl.style.display = open ? ((windowEl.id === 'win-pcgames') ? 'all' : 'flex') : 'none';
+        if (open) {
+            cascadePosition(windowEl, index);
+            windowEl.dataset.userMoved = 'false';
+        }
         windowEl.style.zIndex = index + 1;
         
         const maxBtn = windowEl.querySelector('.btn-maximize');
@@ -397,20 +536,22 @@ function applyDefaultLayout() {
 
     taskbarContainer.innerHTML = '';
 
-    windowsList.forEach(windowEl => {
-        const btn = standardWindowMap.get(windowEl.id);
-        if (btn) taskbarContainer.appendChild(btn);
-    });
+    if (open) {
+        windowsList.forEach(windowEl => {
+            const btn = standardWindowMap.get(windowEl.id);
+            if (btn) taskbarContainer.appendChild(btn);
+        });
 
-    const activeImageWindows = Array.from(document.querySelectorAll("div.window[id^='win-uploaded-']"));
-    activeImageWindows.sort((a, b) => a.id.localeCompare(b.id));
+        const activeImageWindows = Array.from(document.querySelectorAll("div.window[id^='win-uploaded-']"));
+        activeImageWindows.sort((a, b) => a.id.localeCompare(b.id));
 
-    activeImageWindows.forEach((win) => {
-        const associatedBtn = imageWindowMap.get(win.id);
-        if (associatedBtn) {
-            taskbarContainer.appendChild(associatedBtn);
-        }
-    });
+        activeImageWindows.forEach((win) => {
+            const associatedBtn = imageWindowMap.get(win.id);
+            if (associatedBtn) {
+                taskbarContainer.appendChild(associatedBtn);
+            }
+        });
+    }
 
     highestZ = windowsList.length + 1;
     renameActiveImagePanes();
@@ -462,8 +603,10 @@ taskBtn.addEventListener('click', () => {
 
       windowEl.classList.toggle('maximized');
       if (!windowEl.classList.contains('maximized')) {
-          windowEl.style.left = savedLeft;
-          windowEl.style.top = savedTop;
+          // No need to reassign left/top here — maximized state only
+          // overrides position visually via CSS !important, so the inline
+          // style still holds the correct pre-maximize (cascaded or
+          // user-moved) position.
           bringToFront(windowEl);
           if (maxBtn) maxBtn.setAttribute('aria-label', 'Maximize');
       } else {
@@ -523,6 +666,8 @@ taskBtn.addEventListener('click', () => {
 
     if (newTop < 0) newTop = 0;
 
+    windowEl.dataset.userMoved = 'true';
+
     savedLeft = `${newLeft}px`;
     savedTop = `${newTop}px`;
     windowEl.style.left = savedLeft;
@@ -569,8 +714,10 @@ windowsList.forEach(windowEl => {
     setupWindowLogic(windowEl, false);
 });
 
-applyDefaultLayout();
-reorderBtn.addEventListener('click', applyDefaultLayout);
+// Start with a clean desktop — windows are positioned but stay closed
+// until the user double-clicks a desktop icon to open one.
+applyDefaultLayout({ open: false });
+// reorderBtn.addEventListener('click', () => applyDefaultLayout({ open: true }));
 
 function updateClock() {
     const clockElement = document.getElementById('taskbar-clock');
@@ -627,14 +774,11 @@ document.getElementById('image-uploader').addEventListener('change', function(e)
         const reader = new FileReader();
         reader.onload = function(event) {
             const assignedNum = document.querySelectorAll("div.window[id^='win-uploaded-']").length + 1;
-            const secureTimestampId = Date.now() + "-" + index + "-" + Math.ran().toString(36).substr(2, 5);
+            const secureTimestampId = Date.now() + "-" + index + "-" + Math.random().toString(36).substr(2, 5);
             
             const newWindow = document.createElement('div');
             newWindow.className = 'window glass active';
             newWindow.id = `win-uploaded-${secureTimestampId}`;
-            
-            newWindow.style.left = `${80 + (assignedNum * 25)}px`;
-            newWindow.style.top = `${120 + (assignedNum * 25)}px`;
             newWindow.style.width = '300px';
             newWindow.style.height = '300px';
             newWindow.style.zIndex = ++highestZ;
@@ -654,9 +798,13 @@ document.getElementById('image-uploader').addEventListener('change', function(e)
             `;
 
             document.body.appendChild(newWindow);
+            // Same cascade system as every other window: offsets diagonally
+            // from whatever's already open so title bars stay visible.
+            cascadePosition(newWindow);
             
             const assignedTaskBtn = setupWindowLogic(newWindow, true);
             assignedTaskBtn.dataset.windowLink = `win-uploaded-${secureTimestampId}`;
+            taskbarContainer.appendChild(assignedTaskBtn);
             
             renameActiveImagePanes();
         };
@@ -676,12 +824,37 @@ document.getElementById('image-uploader').addEventListener('change', function(e)
     let dragStartX = 0;
     let catStartLeft = 0;
 
-    const meowSound = new Audio('https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@3a243dc331b07cf2a7c473f9bed6af732319ce17/cat_anim/meow%20PLUS%20FADE%20AND%20SLOWED%2BREVERBED%20AND%20CHOPPED%20NOT%20SLOPPED%20CUH.mp3');
+    // ---- Meow sound options ----
+    // Paste your 3 meow sound links here. "meow1" already has the original
+    // sound as a default; just fill in the empty strings for meow2 / meow3.
+    const meowSoundUrls = {
+        meow1: 'https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@064ed227b7d0d19d24615b1ebf929ca8733b0700/cat_anim/meow3.mp3',
+        meow2: 'https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@064ed227b7d0d19d24615b1ebf929ca8733b0700/cat_anim/meow2.mp3', // <-- paste link for Meow 2 here
+        meow3: 'https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@064ed227b7d0d19d24615b1ebf929ca8733b0700/cat_anim/meow1.mp3'  // <-- paste link for Meow 3 here
+    };
+
+    const meowSound = new Audio(meowSoundUrls[settings.meowSound] || meowSoundUrls.meow1);
 
     function playMeow() {
         if (!settings.enableMeow) return;
-        meowSound.currentTime = 0;
+        
+        // Prevent the sound from clipping or restarting if it's already playing
+        if (!meowSound.paused) return; 
+        
         meowSound.play().catch(() => {});
+    }
+
+    const meowSoundSelect = document.getElementById('meow-sound-select');
+    if (meowSoundSelect) {
+        meowSoundSelect.value = settings.meowSound;
+        meowSoundSelect.addEventListener('change', (e) => {
+            settings.meowSound = e.target.value;
+            saveSettings();
+            const newSrc = meowSoundUrls[settings.meowSound];
+            if (newSrc) {
+                meowSound.src = newSrc;
+            }
+        });
     }
 
     function clampCatLeft(left) {
@@ -901,4 +1074,179 @@ document.getElementById('image-uploader').addEventListener('change', function(e)
     searchEl.addEventListener('input', () => renderChangelogs(searchEl.value));
 
     loadChangelogs();
+})();
+
+
+// --- DESKTOP ICONS LOGIC ---
+const gridWidth = 90;
+const gridHeight = 100;
+const desktopIcons = document.querySelectorAll('.desktop-icon');
+
+// 1. Initialize their starting positions in a grid (top to bottom, left to right)
+let startX = 10;
+let startY = 10;
+const maxScreenHeight = window.innerHeight - 80;
+
+desktopIcons.forEach((icon) => {
+    icon.style.left = `${startX}px`;
+    icon.style.top = `${startY}px`;
+    
+    startY += gridHeight;
+    // Move to the next column if we hit the bottom of the screen
+    if (startY > maxScreenHeight) {
+        startY = 10;
+        startX += gridWidth;
+    }
+});
+
+// 2. Drag and Snap logic
+let draggedIcon = null;
+let dragOffsetX = 0;
+let dragOffsetY = 0;
+
+desktopIcons.forEach(icon => {
+    // Single click: Select the icon
+    icon.addEventListener('mousedown', (e) => {
+        if (e.button !== 0) return; // Only allow left-click dragging
+        
+        document.querySelectorAll('.desktop-icon').forEach(i => i.classList.remove('selected'));
+        icon.classList.add('selected');
+        
+        // Start Drag
+        draggedIcon = icon;
+        const rect = icon.getBoundingClientRect();
+        dragOffsetX = e.clientX - rect.left;
+        dragOffsetY = e.clientY - rect.top;
+        
+        icon.style.zIndex = 2; // Slight bump to stay above other icons while dragging
+        e.stopPropagation(); 
+    });
+
+    // Double click: Open the window
+    icon.addEventListener('dblclick', () => {
+        const targetId = icon.dataset.target;
+        const windowEl = document.getElementById(targetId);
+        const taskBtn = standardWindowMap.get(targetId);
+        
+        if (windowEl && taskBtn) {
+            windowEl.style.display = 'flex';
+            if (windowEl.dataset.userMoved !== 'true') {
+                cascadePosition(windowEl);
+            }
+            if (!document.getElementById('taskbar-items-container').contains(taskBtn)) {
+                document.getElementById('taskbar-items-container').appendChild(taskBtn);
+            }
+            highestZ++;
+            windowEl.style.zIndex = highestZ;
+        }
+        icon.classList.remove('selected');
+    });
+});
+
+// Handle moving the mouse
+document.addEventListener('mousemove', (e) => {
+    if (!draggedIcon) return;
+    
+    // Move the icon freely with the mouse
+    const newLeft = e.clientX - dragOffsetX;
+    const newTop = e.clientY - dragOffsetY;
+    
+    draggedIcon.style.left = `${newLeft}px`;
+    draggedIcon.style.top = `${newTop}px`;
+});
+
+// Handle releasing the mouse and snapping to grid
+// Helper function to check if a grid slot is already taken
+function isSlotOccupied(x, y, currentIcon) {
+    const icons = document.querySelectorAll('.desktop-icon');
+    for (let i = 0; i < icons.length; i++) {
+        if (icons[i] === currentIcon) continue;
+        
+        const iconLeft = parseInt(icons[i].style.left, 10);
+        const iconTop = parseInt(icons[i].style.top, 10);
+        
+        // If an icon is found at these exact coordinates, the slot is taken
+        if (iconLeft === x && iconTop === y) {
+            return true;
+        }
+    }
+    return false;
+}
+
+// Handle releasing the mouse and snapping to grid (UPDATED)
+document.addEventListener('mouseup', (e) => {
+    if (!draggedIcon) return;
+    
+    const rect = draggedIcon.getBoundingClientRect();
+    
+    // Calculate nearest grid slot
+    let snappedX = Math.round((rect.left - 10) / gridWidth) * gridWidth + 10;
+    let snappedY = Math.round((rect.top - 10) / gridHeight) * gridHeight + 10;
+    
+    // Prevent dragging off the top or left of the screen
+    if (snappedX < 10) snappedX = 10;
+    if (snappedY < 10) snappedY = 10;
+
+    // --- NEW: Collision detection to prevent stacking ---
+    const maxScreenHeight = window.innerHeight - 80;
+    
+    // While the target slot is taken, find the next open slot
+    while (isSlotOccupied(snappedX, snappedY, draggedIcon)) {
+        snappedY += gridHeight; // Move down one slot
+        
+        // If we hit the bottom of the screen, move to the top of the next column
+        if (snappedY > maxScreenHeight) {
+            snappedY = 10;
+            snappedX += gridWidth;
+        }
+    }
+    // ----------------------------------------------------
+
+    // Apply the final empty snapped position
+    draggedIcon.style.left = `${snappedX}px`;
+    draggedIcon.style.top = `${snappedY}px`;
+    draggedIcon.style.zIndex = ''; // Reset z-index
+
+    draggedIcon = null;
+});
+
+// Deselect icons if you click the empty desktop background
+document.body.addEventListener('mousedown', (e) => {
+    if (!e.target.closest('.desktop-icon')) {
+        document.querySelectorAll('.desktop-icon').forEach(i => i.classList.remove('selected'));
+    }
+});
+
+// --- WELCOME / INSTRUCTIONS DIALOG ---
+// It's a normal .window element (same markup, and now run through the same
+// setupWindowLogic() as every other window) so it's draggable by its title
+// bar, shows up on the taskbar, and its Minimize/Close buttons behave the
+// same way. It's kept out of windowsList on purpose, so applyDefaultLayout()
+// never touches it and it stays visible even though every other window
+// starts closed. Nothing auto-dismisses it — only the title bar's Close
+// button or the OK button will hide it.
+(function () {
+    const dialog = document.getElementById('instructions-window');
+    if (!dialog) return;
+
+    const taskBtn = setupWindowLogic(dialog, false);
+    taskbarContainer.appendChild(taskBtn);
+
+    const okBtn = document.getElementById('instructions-ok-btn');
+    const closeBtn = dialog.querySelector('.btn-close');
+    if (okBtn && closeBtn) {
+        // Route OK through the same close handler the X button already has,
+        // so both paths hide the window and remove its taskbar entry.
+        okBtn.addEventListener('click', () => closeBtn.click());
+    }
+
+    // "Re-order Layout" wipes and rebuilds the taskbar for the standard
+    // windows — re-add this button afterward if the dialog is still open.
+    // Re-order Layout button disabled — listener commented out along with
+    // the button itself, so this taskbar re-add no longer applies.
+    // reorderBtn.addEventListener('click', () => {
+    //     if (dialog.style.display !== 'none' && !taskbarContainer.contains(taskBtn)) {
+    //         taskbarContainer.appendChild(taskBtn);
+    //     }
+    // });
 })();
