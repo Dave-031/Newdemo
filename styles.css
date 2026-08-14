@@ -18,39 +18,7 @@ p, h1, h2 {
     font-size: 14px;
 }
 
-.window {
-    position: absolute;
-    display: flex;
-    flex-direction: column;
-    user-select: none;
-}
-
-.title-bar {
-    cursor: move;
-}
-
-.window-body {
-    flex-grow: 1;
-    overflow-y: auto;
-}
-
-/* Default sizing fallback for standard windows */
-.window:not(.maximized) {
-    width: 320px !important;
-    height: auto !important;
-}
-
-/* DYNAMIC SIZING FOR REPORTS & RECOMMEND 
-   We lock the width to your preferred 450px, but let the height
-   calculate dynamically (auto) so the larger text never spills over or triggers scrollbars.
-*/
-
-/* Hide full content when the window is NOT maximized */
-#win-pcgames:not(.maximized) .full-content,
-#win-games:not(.maximized) .full-content {
-    display: none !important;
-}
-
+/* --- DESKTOP ICONS --- */
 /* --- DESKTOP ICONS (UPDATED) --- */
 #desktop-icons-container {
     position: absolute;
@@ -104,6 +72,39 @@ p, h1, h2 {
     word-wrap: break-word;
     line-height: 1.2;
     pointer-events: none;
+}
+
+.window {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    user-select: none;
+}
+
+.title-bar {
+    cursor: move;
+}
+
+.window-body {
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+/* Default sizing fallback for standard windows */
+.window:not(.maximized) {
+    width: 320px !important;
+    height: auto !important;
+}
+
+/* DYNAMIC SIZING FOR REPORTS & RECOMMEND 
+   We lock the width to your preferred 450px, but let the height
+   calculate dynamically (auto) so the larger text never spills over or triggers scrollbars.
+*/
+
+/* Hide full content when the window is NOT maximized */
+#win-pcgames:not(.maximized) .full-content,
+#win-games:not(.maximized) .full-content {
+    display: none !important;
 }
 
 /* Hide the preview text when the window IS maximized */
@@ -386,13 +387,62 @@ div[id^="win-uploaded-"] .window-body {
     cursor: grabbing;
 }
 
+/* --- START BUTTON EASTER EGG: ROLLING & FALLING IMAGES --- */
+.egg-roll-image {
+    position: fixed;
+    top: 55%; /* overridden per-instance via inline style for a random vertical spot */
+    left: -160px;
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    pointer-events: none;
+    z-index: 2147483000; /* Above absolutely everything, including maximized windows and the login gate */
+    animation: egg-roll-across 4s linear forwards;
+    filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.45));
+}
+
+@keyframes egg-roll-across {
+    0% {
+        left: -160px;
+        transform: translateY(-50%) rotate(0deg);
+    }
+    100% {
+        left: 100vw;
+        transform: translateY(-50%) rotate(1080deg);
+    }
+}
+
+.egg-fall-image {
+    position: fixed;
+    top: -160px;
+    left: 50%; /* overridden per-instance via inline style for a random horizontal spot */
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    pointer-events: none;
+    z-index: 2147483000; /* Above absolutely everything, including maximized windows and the login gate */
+    animation: egg-fall-across 4s linear forwards;
+    filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.45));
+}
+
+@keyframes egg-fall-across {
+    0% {
+        top: -160px;
+        transform: translateX(-50%) rotate(0deg);
+    }
+    100% {
+        top: 100vh;
+        transform: translateX(-50%) rotate(1080deg);
+    }
+}
+
 @keyframes taskbar-cat-idle {
     from { background-position-x: 0px; }
     to { background-position-x: -640px; }
 }
 
 /* Container alignment */
-.title-bar-text, .taskbar-item {
+.title-bar-text, .taskbar-item, #start-btn {
     display: flex !important;
     align-items: center !important;
     gap: 6px !important;
@@ -410,28 +460,57 @@ div[id^="win-uploaded-"] .window-body {
 }
 
 /* --- Windows 98 Theme --- */
-[data-theme="win98"] .icon-pcgames    { background-image: url('https://cdn.jsdelivr.net/gh/trapd00r/win95-winxp_icons@master/icons/w2k-computer.ico'); /* TODO: add your PC games icon URL */ }
-[data-theme="win98"] .icon-reports    { background-image: url('https://cdn.jsdelivr.net/gh/trapd00r/win95-winxp_icons@master/icons/w2k-documents.ico'); }
-[data-theme="win98"] .icon-settings   { background-image: url('https://cdn.jsdelivr.net/gh/trapd00r/win95-winxp_icons@master/icons/w2k-settings.ico'); }
-[data-theme="win98"] .icon-games      { background-image: url('https://cdn.jsdelivr.net/gh/trapd00r/win95-winxp_icons@master/icons/w2k-programs.ico'); }
-[data-theme="win98"] .icon-recommend  { background-image: url('https://cdn.jsdelivr.net/gh/trapd00r/win95-winxp_icons@master/icons/w2k-help.ico'); }
-[data-theme="win98"] .icon-changelogs { background-image: url('https://cdn.jsdelivr.net/gh/trapd00r/win95-winxp_icons@master/icons/w2k-default_document.ico'); }
-[data-theme="win98"] .icon-image      { background-image: url('https://cdn.jsdelivr.net/gh/trapd00r/win95-winxp_icons@master/icons/w98_kodak_imaging_file.ico'); }
+[data-theme="win98"] .icon-pcgames    { background-image: url('https://i.postimg.cc/d73hwS1t/pc-games.png'); }
+[data-theme="win98"] .icon-reports    { background-image: url('https://i.postimg.cc/v1rFc5mM/report.png'); }
+[data-theme="win98"] .icon-settings   { background-image: url('https://i.postimg.cc/6449mDYL/settings.png'); }
+[data-theme="win98"] .icon-games      { background-image: url('https://i.postimg.cc/YLwfsw-xF/games.png'); }
+[data-theme="win98"] .icon-recommend  { background-image: url('https://i.postimg.cc/JGshtdVp/recommend.png'); }
+[data-theme="win98"] .icon-changelogs { background-image: url('https://i.postimg.cc/K1wbwZ18/changelogs.png'); }
+[data-theme="win98"] .icon-image      { background-image: url('https://i.postimg.cc/WhftpcDP/image.png'); }
+[data-theme="win98"] .icon-welcome    { background-image: url('https://i.postimg.cc/MXKbTRZc/welcome.png'); }
+[data-theme="win98"] .icon-start      { background-image: url('https://i.postimg.cc/R6ZZzv7c/98icon.png'); }
 
 /* --- Windows XP Theme --- */
-[data-theme="winxp"] .icon-pcgames    { background-image: url('https://cdn.jsdelivr.net/gh/trapd00r/win95-winxp_icons@master/icons/w2k-computer.ico'); /* TODO: add your PC games icon URL */ }
-[data-theme="winxp"] .icon-reports    { background-image: url('https://cdn.jsdelivr.net/gh/trapd00r/win95-winxp_icons@master/icons/w2k_documents.ico'); }
-[data-theme="winxp"] .icon-settings   { background-image: url('https://cdn.jsdelivr.net/gh/trapd00r/win95-winxp_icons@master/icons/w2k_control_panel.ico'); }
-[data-theme="winxp"] .icon-games      { background-image: url('https://cdn.jsdelivr.net/gh/trapd00r/win95-winxp_icons@master/icons/w2k_programs.ico'); }
-[data-theme="winxp"] .icon-recommend  { background-image: url('https://cdn.jsdelivr.net/gh/trapd00r/win95-winxp_icons@master/icons/w2k_help.ico'); }
-[data-theme="winxp"] .icon-changelogs { background-image: url('https://cdn.jsdelivr.net/gh/trapd00r/win95-winxp_icons@master/icons/w2k_default_document.ico'); }
-[data-theme="winxp"] .icon-image      { background-image: url('https://cdn.jsdelivr.net/gh/trapd00r/win95-winxp_icons@master/icons/w98_kodak_imaging_file.ico'); }
+[data-theme="winxp"] .icon-pcgames    { background-image: url('https://i.postimg.cc/d73hwS1t/pc-games.png'); }
+[data-theme="winxp"] .icon-reports    { background-image: url('https://i.postimg.cc/v1rFc5mM/report.png'); }
+[data-theme="winxp"] .icon-settings   { background-image: url('https://i.postimg.cc/6449mDYL/settings.png'); }
+[data-theme="winxp"] .icon-games      { background-image: url('https://i.postimg.cc/YLwfsw-xF/games.png'); }
+[data-theme="winxp"] .icon-recommend  { background-image: url('https://i.postimg.cc/JGshtdVp/recommend.png'); }
+[data-theme="winxp"] .icon-changelogs { background-image: url('https://i.postimg.cc/K1wbwZ18/changelogs.png'); }
+[data-theme="winxp"] .icon-image      { background-image: url('https://i.postimg.cc/WhftpcDP/image.png'); }
+[data-theme="winxp"] .icon-welcome    { background-image: url('https://i.postimg.cc/MXKbTRZc/welcome.png'); }
+[data-theme="winxp"] .icon-start      { background-image: url('https://i.postimg.cc/CRJypkmr/xpicon.png'); }
+
+/* --- WELCOME / INSTRUCTIONS DIALOG SIZING ---
+   The window chrome itself (title bar, borders, buttons) comes from the
+   active theme stylesheet (98/xp/7.css) — this just makes the dialog a
+   bit bigger and the text a bit more readable than the app's default. */
+#instructions-window {
+    width: 420px !important;
+}
+
+#instructions-window .window-body {
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+#instructions-window .window-body p,
+#instructions-window .window-body li {
+    font-size: 16px;
+}
+
+#instructions-window #instructions-ok-btn {
+    font-size: 15px;
+    padding: 8px 26px;
+}
 
 /* --- Windows 7 Theme Icons --- */
-[data-theme="win7"] .icon-pcgames    { background-image: url('https://cdn.jsdelivr.net/gh/trapd00r/win95-winxp_icons@master/icons/w2k-computer.ico'); /* TODO: add your PC games icon URL */ }
-[data-theme="win7"] .icon-reports    { background-image: url('https://cdn.jsdelivr.net/gh/trapd00r/win95-winxp_icons@master/icons/w2k_documents.ico'); }
-[data-theme="win7"] .icon-games      { background-image: url('https://cdn.jsdelivr.net/gh/trapd00r/win95-winxp_icons@master/icons/w2k_programs.ico'); }
-[data-theme="win7"] .icon-settings   { background-image: url('https://cdn.jsdelivr.net/gh/trapd00r/win95-winxp_icons@master/icons/w2k_control_panel.ico'); }
-[data-theme="win7"] .icon-recommend  { background-image: url('https://cdn.jsdelivr.net/gh/trapd00r/win95-winxp_icons@master/icons/w2k_help.ico'); }
-[data-theme="win7"] .icon-changelogs { background-image: url('https://cdn.jsdelivr.net/gh/trapd00r/win95-winxp_icons@master/icons/w2k_default_document.ico'); }
-[data-theme="win7"] .icon-image      { background-image: url('https://cdn.jsdelivr.net/gh/trapd00r/win95-winxp_icons@master/icons/w98_kodak_imaging_file.ico'); }
+[data-theme="win7"] .icon-pcgames    { background-image: url('https://i.postimg.cc/d73hwS1t/pc-games.png'); }
+[data-theme="win7"] .icon-reports    { background-image: url('https://i.postimg.cc/v1rFc5mM/report.png'); }
+[data-theme="win7"] .icon-settings   { background-image: url('https://i.postimg.cc/6449mDYL/settings.png'); }
+[data-theme="win7"] .icon-games      { background-image: url('https://i.postimg.cc/YLwfsw-xF/games.png'); }
+[data-theme="win7"] .icon-recommend  { background-image: url('https://i.postimg.cc/JGshtdVp/recommend.png'); }
+[data-theme="win7"] .icon-changelogs { background-image: url('https://i.postimg.cc/K1wbwZ18/changelogs.png'); }
+[data-theme="win7"] .icon-image      { background-image: url('https://i.postimg.cc/WhftpcDP/image.png'); }
+[data-theme="win7"] .icon-welcome    { background-image: url('https://i.postimg.cc/MXKbTRZc/welcome.png'); }
+[data-theme="win7"] .icon-start      { background-image: url('https://i.postimg.cc/tn9tbZrt/7icon.png'); }
