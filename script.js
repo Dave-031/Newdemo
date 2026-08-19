@@ -934,7 +934,7 @@ document.getElementById('image-uploader').addEventListener('change', function(e)
     setupGameGrid('1.json', 'pcgames-list', 'pcgames-search');
 
     // Replace '2.json' with your actual JSON endpoint/file path for GAMES
-    setupGameGrid('1.json', 'games-list', 'games-search');
+    setupGameGrid('https://gist.githubusercontent.com/Dave-031/bb96a99fc2db2f13aa07d14802015431/raw/zones.json', 'games-list', 'games-search');
 });
 
     // Keep the cat inside the taskbar if the window gets resized
