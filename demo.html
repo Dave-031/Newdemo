@@ -4,7 +4,7 @@
     <title>Game Station - Interactive Multi-Window Hub.</title>
     <link id="theme-stylesheet" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@32af2b5554172ed0694716e07d049b8de7c623f2/themes/7_theme.css">
     <link rel="icon" type="image/x-icon" href="https://64.media.tumblr.com/338b84acf3491001241d1cadf54a99c1/742a58dac3bc91cf-79/s75x75_c1/db3914648ceb52508cfaadc2b6d0dedcc1bbedd1.gifv">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@ef7ca81d943ba497d343fa90e2fe1a6ae920ee98/styles.css">
+    <link rel="stylesheet" href="styles.css">
   </head>
 <body>
 
@@ -247,7 +247,15 @@
         <button aria-label="Close" class="btn-close"></button>
       </div>
     </div>
-    <div class="window-body has-space" style="padding: 16px; box-sizing: border-box; overflow: hidden;">
+    <div class="window-body has-space" style="padding: 16px; box-sizing: border-box; overflow: hidden; position: relative;">
+        <div class="submit-overlay" id="report-submit-overlay">
+          <div class="submit-overlay-box">
+            <div class="submit-overlay-spinner"></div>
+            <div class="submit-overlay-marquee"><div class="submit-overlay-marquee-block"></div></div>
+            <div class="submit-overlay-stripes"><div class="submit-overlay-stripes-fill"></div></div>
+            <div class="submit-overlay-text" id="report-submit-overlay-text">Submitting report&hellip;</div>
+          </div>
+        </div>
         <div style="display: flex; flex-direction: column; gap: 14px;">
           <fieldset style="border: 2px solid #808080; padding: 16px; margin: 0;">
             <legend style="font-weight: bold; color: #000; font-size: 15px;">Report a Broken Game</legend>
@@ -263,8 +271,9 @@
             </div>
           </fieldset>
           
-          <div style="display: flex; justify-content: flex-end;">
-            <button style="padding: 8px 24px; cursor: pointer; font-size: 13px; font-weight: bold;" onclick="const val = document.getElementById('broken-game-name').value; if(val.trim()) { alert('Report submitted for: ' + val); document.getElementById('broken-game-name').value = ''; } else { alert('Please enter a game name.'); }">Submit</button>
+          <div style="display: flex; justify-content: flex-end; align-items: center; gap: 12px;">
+            <span id="report-submit-status" style="font-size: 12px; color: #a00000; font-weight: bold;"></span>
+            <button id="report-submit-btn" style="padding: 8px 24px; cursor: pointer; font-size: 13px; font-weight: bold;">Submit</button>
           </div>
         </div>
     </div>
@@ -278,7 +287,15 @@
         <button aria-label="Close" class="btn-close"></button>
       </div>
     </div>
-    <div class="window-body has-space" style="padding: 16px; box-sizing: border-box; overflow: hidden;">
+    <div class="window-body has-space" style="padding: 16px; box-sizing: border-box; overflow: hidden; position: relative;">
+        <div class="submit-overlay" id="recommend-submit-overlay">
+          <div class="submit-overlay-box">
+            <div class="submit-overlay-spinner"></div>
+            <div class="submit-overlay-marquee"><div class="submit-overlay-marquee-block"></div></div>
+            <div class="submit-overlay-stripes"><div class="submit-overlay-stripes-fill"></div></div>
+            <div class="submit-overlay-text" id="recommend-submit-overlay-text">Submitting recommendation&hellip;</div>
+          </div>
+        </div>
         <div style="display: flex; flex-direction: column; gap: 14px;">
           <fieldset style="border: 2px solid #808080; padding: 16px; margin: 0;">
             <legend style="font-weight: bold; color: #000; font-size: 15px;">Recommend a Game</legend>
@@ -298,18 +315,9 @@
             </div>
           </fieldset>
           
-          <div style="display: flex; justify-content: flex-end;">
-            <button style="padding: 8px 24px; cursor: pointer; font-size: 13px; font-weight: bold;" onclick="
-              const nameVal = document.getElementById('rec-game-name').value;
-              const reasonVal = document.getElementById('rec-game-reason').value;
-              if(nameVal.trim() && reasonVal.trim()) { 
-                alert('Recommendation submitted for: ' + nameVal); 
-                document.getElementById('rec-game-name').value = ''; 
-                document.getElementById('rec-game-reason').value = ''; 
-              } else { 
-                alert('Please fill out both text fields before submitting.'); 
-              }
-            ">Submit</button>
+          <div style="display: flex; justify-content: flex-end; align-items: center; gap: 12px;">
+            <span id="recommend-submit-status" style="font-size: 12px; color: #a00000; font-weight: bold;"></span>
+            <button id="recommend-submit-btn" style="padding: 8px 24px; cursor: pointer; font-size: 13px; font-weight: bold;">Submit</button>
           </div>
         </div>
     </div>
@@ -377,7 +385,7 @@
     </div>
   </div>
 
-<script src="https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@ef7ca81d943ba497d343fa90e2fe1a6ae920ee98/script.js"></script>
+<script src="script.js"></script>
 
 <style>
 #login-gate{position:fixed;inset:0;z-index:2147483647;background:#000;}
