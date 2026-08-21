@@ -58,12 +58,10 @@
         <h1 style="font-size: 24px; margin: 0 0 12px 0; font-weight: bold; color: #000; text-align: center;">GAMES</h1>
 
         <div style="margin-bottom: 15px;">
-          <input type="text" id="games-search" placeholder="Search games..." style="width: 100%; box-sizing: border-box; padding: 6px 8px; font-size: 13px; font-family: sans-serif;">
+          <input type="text" id="searchBar" placeholder="Search zones..." oninput="filterZones()" style="width: 100%; box-sizing: border-box; padding: 6px 8px; font-size: 13px; font-family: sans-serif;">
         </div>
 
-        <div id="games-list" style="flex-grow: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; align-content: start; padding-right: 4px;">
-          <!-- Items will be loaded dynamically via JavaScript -->
-        </div>
+        <div id="container" style="flex-grow: 1; overflow-y: auto; padding-right: 4px;">Loading...</div>
       </div>
     </div>
   </div>
@@ -381,6 +379,41 @@
       </ul>
       <div style="display: flex; justify-content: flex-end;">
         <button id="instructions-ok-btn" style="padding: 6px 22px; cursor: pointer;">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GAME VIEWER (opens a clicked game in-page, with Fullscreen / Open in
+       New Tab / Close on top) and the YT Playables popup. Markup/behavior
+       match the zone-viewer script exactly; look/feel is themed by
+       styles.css so it matches whichever OS theme (98/xp/7) is active. -->
+  <div id="zoneViewer">
+    <div class="title-bar">
+      <div class="title-bar-text">
+        <span id="zoneName">zone</span>
+        <!-- Hidden ID required for Open in New Tab to work properly -->
+        <span id="zoneId" style="display: none;"></span>
+      </div>
+      <div class="zone-viewer-controls">
+        <button type="button" onclick="fullscreenZone()">Fullscreen</button>
+        <button type="button" onclick="aboutBlank()">Open in New Tab</button>
+        <button type="button" onclick="closeZone()">Close</button>
+      </div>
+    </div>
+    <iframe id="zoneFrame"></iframe>
+  </div>
+
+  <!-- Popup (kept exclusively for YT Playables messages) -->
+  <div id="popupOverlay">
+    <div class="popup-box">
+      <div class="title-bar">
+        <div class="title-bar-text" id="popupTitle">Title</div>
+        <div class="title-bar-controls">
+          <button aria-label="Close" id="popupClose" onclick="closePopup()"></button>
+        </div>
+      </div>
+      <div class="popup-body" id="popupBody">
+        Content will be here
       </div>
     </div>
   </div>

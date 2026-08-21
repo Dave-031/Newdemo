@@ -1102,15 +1102,13 @@ document.addEventListener("DOMContentLoaded", function() {
     // Clicking a card navigates the current tab to game.link (default openMode).
     setupGameGrid('1.json', 'pcgames-list', 'pcgames-search', PCGAMES_IGNORE_LIST);
 
-    // GAMES: main JSON (zones.json) plus a secondary JSON (testing.json) with
-    // more games, in the exact same format. Both are always fetched, merged,
-    // filtered against GAMES_IGNORE_LIST, and rendered in alphabetical order.
-    // Clicking a card fetches that game's actual HTML from jsdelivr and loads
-    // it into a fresh about:blank window instead of navigating away.
-    setupGameGrid([
-        'https://cdn.jsdelivr.net/gh/freebuisness/assets@main/zones.json',
-        'https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@main/testing.json'
-    ], 'games-list', 'games-search', GAMES_IGNORE_LIST, 'fetchHtml');
+    // GAMES window: now driven entirely by the zone-viewer script at the
+    // bottom of this file (search '#searchBar' / '#container' section below).
+    // It fetches zones.json itself, renders the #container grid, and opens
+    // a clicked game in the in-page #zoneViewer window (or the YT Playables
+    // popup) instead of a new tab. GAMES_IGNORE_LIST and the secondary
+    // testing.json source above are NOT applied by that script — see the
+    // note at the top of that section if you want them wired back in.
 });
 
 (function setupChangelogs() {
@@ -1486,3 +1484,238 @@ document.body.addEventListener('mousedown', (e) => {
         });
     }
 })();
+
+// ============================================================
+// GAMES window — zone viewer (pasted in verbatim, unmodified)
+// Drives #searchBar / #container in the GAMES window, plus the
+// #zoneViewer game window and the #popupOverlay YT Playables popup.
+// ============================================================
+const container = document.getElementById('container');
+const zoneViewer = document.getElementById('zoneViewer');
+let zoneFrame = document.getElementById('zoneFrame');
+const searchBar = document.getElementById('searchBar');
+let zonesURL = "https://cdn.jsdelivr.net/gh/freebuisness/assets@main/zones.json";
+const coverURL = "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/";
+const htmlURL = "https://cdn.jsdelivr.net/gh/freebuisness/html@main/";
+
+function zoneURL(u) {
+    return (u + "").replace("{COVER_URL}", coverURL).replace("{HTML_URL}", htmlURL);
+}
+let zones = [];
+
+async function listZones() {
+    try {
+        const response = await fetch(zonesURL+"?t="+Date.now());
+        const json = await response.json();
+        zones = json;
+        
+        // Default sort by ID
+        zones.sort((a, b) => a.id - b.id);
+        zones.sort((a, b) => (a.id === -1 ? -1 : b.id === -1 ? 1 : 0));
+        
+        displayZones(zones);
+
+        try {
+            const search = new URLSearchParams(window.location.search);
+            const id = search.get('id');
+            const embed = window.location.hash.includes("embed");
+            if (id) {
+                const zone = zones.find(zone => zone.id + '' == id + '');
+                if (zone) {
+                    if (embed) {
+                        if (zone.url.startsWith("http")) {
+                            window.open(zone.url, "_blank");
+                        } else {
+                            const url = zoneURL(zone.url);
+                            fetch(url+"?t="+Date.now()).then(response => response.text()).then(html => {
+                                document.documentElement.innerHTML = injectZoneBase(html, url);
+                            }).catch(error => alert("Failed to load zone: " + error));
+                        }
+                    } else {
+                        openZone(zone);
+                    }
+                }
+            }
+        } catch(error){}
+    } catch (error) {
+        console.error(error);
+        container.innerHTML = `Error loading zones: ${error}`;
+    }
+}
+
+function displayZones(zonesToDisplay) {
+    container.innerHTML = "";
+    zonesToDisplay.forEach((file, index) => {
+        const zoneItem = document.createElement("div");
+        zoneItem.className = "zone-item";
+        zoneItem.onclick = () => openZone(file);
+        
+        const img = document.createElement("img");
+        img.dataset.src = zoneURL(file.cover);
+        img.alt = file.name;
+        img.loading = "lazy";
+        img.className = "lazy-zone-img";
+        zoneItem.appendChild(img);
+        
+        const button = document.createElement("button");
+        const label = document.createElement("span");
+        label.className = "zone-title-text";
+        label.textContent = file.name;
+        button.appendChild(label);
+        button.onclick = (event) => {
+            event.stopPropagation();
+            openZone(file);
+        };
+        zoneItem.appendChild(button);
+        container.appendChild(zoneItem);   
+    });
+    
+    if (container.innerHTML === "") {
+        container.innerHTML = "No zones found.";
+    }
+
+    const lazyImages = document.querySelectorAll('img.lazy-zone-img');
+    const imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting && !zoneViewer.hidden) {
+                const img = entry.target;
+                img.src = img.dataset.src;
+                img.classList.remove("lazy-zone-img");
+                observer.unobserve(img);
+            }
+        });
+    }, {
+        rootMargin: "100px", 
+        threshold: 0.1
+    });
+
+    lazyImages.forEach(img => {
+        imageObserver.observe(img);
+    });
+}
+
+function filterZones() {
+    const query = searchBar.value.toLowerCase();
+    const filteredZones = zones.filter(zone => zone.name.toLowerCase().includes(query));
+    displayZones(filteredZones);
+}
+
+const BASE_TAG_RE = /<base\b[^>]*>/i;
+const BASE_HREF_RE = /<base\b[^>]*\bhref\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s">]+))[^>]*>/i;
+
+function zoneBaseFor(url, html) {
+    const folder = url.substring(0, url.lastIndexOf('/') + 1);
+    let root;
+    try { root = new URL(folder, document.baseURI).href; } catch (e) { root = folder; }
+    const m = html.match(BASE_HREF_RE);
+    const declared = m ? (m[1] !== undefined ? m[1] : m[2] !== undefined ? m[2] : m[3]) : "";
+    if (!declared) return root;
+    try { return new URL(declared, root).href; } catch (e) { return root; }
+}
+
+function injectZoneBase(html, url) {
+    const tag = '<base href="' + zoneBaseFor(url, html) + '">';
+    if (BASE_TAG_RE.test(html)) return html.replace(BASE_TAG_RE, tag);
+    if (/<head[^>]*>/i.test(html)) return html.replace(/<head[^>]*>/i, function (m) { return m + tag; });
+    if (/<html[^>]*>/i.test(html)) return html.replace(/<html[^>]*>/i, function (m) { return m + tag; });
+    return tag + html;
+}
+
+function openZone(file) {
+    if (file.url.startsWith("http")) {
+        window.open(file.url, "_blank");
+    } else {
+        const url = zoneURL(file.url);
+        fetch(url+"?t="+Date.now()).then(response => response.text()).then(html => {
+            if (/ytgame/i.test(html)) {
+                document.getElementById('popupTitle').textContent = file.name;
+                const pb = document.getElementById('popupBody');
+                pb.contentEditable = false;
+                pb.innerHTML = '<p style="margin-top:0;">This is a YouTube Playables game, so it only works in its own tab. It\'ll open in a <strong>new tab</strong>.</p>'
+                    + '<button class="settings-button" id="ytOpenBtn">Open in New Tab</button>';
+                document.getElementById('ytOpenBtn').onclick = function () {
+                    const newWindow = window.open("about:blank", "_blank");
+                    if (!newWindow) {
+                        alert("Your browser blocked the popup. Allow popups for this site and try again.");
+                        return;
+                    }
+                    newWindow.document.open();
+                    newWindow.document.write(injectZoneBase(html, url));
+                    newWindow.document.close();
+                    closePopup();
+                };
+                document.getElementById('popupOverlay').style.display = "flex";
+                return;
+            }
+            html = injectZoneBase(html, url);
+            if (zoneFrame.contentDocument === null) {
+                zoneFrame = document.createElement("iframe");
+                zoneFrame.id = "zoneFrame";
+                zoneViewer.appendChild(zoneFrame);
+            }
+            zoneFrame.contentDocument.open();
+            zoneFrame.contentDocument.write(html);
+            zoneFrame.contentDocument.close();
+            document.getElementById('zoneName').textContent = file.name;
+            document.getElementById('zoneId').textContent = file.id;
+            
+            zoneViewer.style.display = "flex";
+            try {
+                const url = new URL(window.location);
+                url.searchParams.set('id', file.id);
+                history.pushState(null, '', url.toString());
+            } catch(error){}
+            zoneViewer.hidden = true;
+        }).catch(error => alert("Failed to load zone: " + error));
+    }
+}
+
+function aboutBlank() {
+    const newWindow = window.open("about:blank", "_blank");
+    let zone = zoneURL(zones.find(zone => zone.id + '' === document.getElementById('zoneId').textContent).url);
+    fetch(zone+"?t="+Date.now()).then(response => response.text()).then(html => {
+        html = injectZoneBase(html, zone);
+        if (newWindow) {
+            newWindow.document.open();
+            newWindow.document.write(html);
+            newWindow.document.close();
+        }
+    })
+}
+
+function closeZone() {
+    zoneViewer.hidden = false;
+    zoneViewer.style.display = "none";
+    zoneViewer.removeChild(zoneFrame);
+    try {
+        const url = new URL(window.location);
+        url.searchParams.delete('id');
+        history.pushState(null, '', url.toString());
+    } catch(error){}
+}
+
+function fullscreenZone() {
+    if (zoneFrame.requestFullscreen) {
+        zoneFrame.requestFullscreen();
+    } else if (zoneFrame.mozRequestFullScreen) {
+        zoneFrame.mozRequestFullScreen();
+    } else if (zoneFrame.webkitRequestFullscreen) {
+        zoneFrame.webkitRequestFullscreen();
+    } else if (zoneFrame.msRequestFullscreen) {
+        zoneFrame.msRequestFullscreen();
+    }
+}
+
+function closePopup() {
+    document.getElementById('popupOverlay').style.display = "none";
+}
+
+listZones();
+
+HTMLCanvasElement.prototype.toDataURL = function (...args) {
+    return "";
+};
+
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+    navigator.serviceWorker.register(new URL('sw.js', location.href).href).catch(() => {});
+}
