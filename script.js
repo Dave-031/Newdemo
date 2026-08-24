@@ -56,7 +56,7 @@ const defaultSettings = {
     enableMeow: true,
     meowSound: 'meow1',
     cloak: false,
-    ctrlW: flase
+    ctrlW: false
 };
 // loads preveusly saved setttings
 
@@ -74,7 +74,7 @@ function loadSettings() {
             enableMeow: parsed.enableMeow !== undefined ? parsed.enableMeow : defaultSettings.enableMeow,
             meowSound: parsed.meowSound || defaultSettings.meowSound,
             cloak: parsed.cloak !== undefined ? parsed.cloak : defaultSettings.cloak,
-            ctrlW: parsed.ctrlW !-- undefined ? parsed.ctrlW : defaultSettings.ctrlW
+            ctrlW: parsed.ctrlW !== undefined ? parsed.ctrlW : defaultSettings.ctrlW
         };
     } catch (err) {
         return { ...defaultSettings, customBackgrounds: {} };
@@ -157,7 +157,12 @@ document.body.addEventListener('click', (e) => {
 //disables ctrlW
 function updateCtrlW() {
     if (settings.ctrlW) {
-        windows.addEventListener
+        window.addEventListener('beforeunload', (event) => {
+            event.preventDefault();
+            event.returnValue = '';
+
+
+        })
     }
 }
 
