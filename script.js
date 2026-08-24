@@ -55,7 +55,8 @@ const defaultSettings = {
     catScale: 1,
     enableMeow: true,
     meowSound: 'meow1',
-    cloak: false
+    cloak: false,
+    ctrlW: flase
 };
 // loads preveusly saved setttings
 
@@ -72,7 +73,8 @@ function loadSettings() {
             catScale: parsed.catScale !== undefined ? parsed.catScale : defaultSettings.catScale,
             enableMeow: parsed.enableMeow !== undefined ? parsed.enableMeow : defaultSettings.enableMeow,
             meowSound: parsed.meowSound || defaultSettings.meowSound,
-            cloak: parsed.cloak !== undefined ? parsed.cloak : defaultSettings.cloak
+            cloak: parsed.cloak !== undefined ? parsed.cloak : defaultSettings.cloak,
+            ctrlW: parsed.ctrlW !-- undefined ? parsed.ctrlW : defaultSettings.ctrlW
         };
     } catch (err) {
         return { ...defaultSettings, customBackgrounds: {} };
@@ -151,7 +153,15 @@ document.body.addEventListener('click', (e) => {
         document.querySelectorAll('.desktop-icon').forEach(i => i.classList.remove('selected'));
     }
 });
-// updates the cloak checkbox
+
+//disables ctrlW
+function updateCtrlW() {
+    if (settings.ctrlW) {
+        windows.addEventListener
+    }
+}
+
+// toggles the cloaking feature
 function updateCloakVis() {
     if (settings.cloak) {
         let link = document.querySelector("link[rel*='icon']");
@@ -211,7 +221,7 @@ function applyTheme(themeValue) {
     updateBackgroundStatus();
     saveSettings();
 }
-
+// #region settings check box logic
 let settings = loadSettings();
 settings.showCat = true; // Taskbar cat is locked visible for now — reserved for a future feature
 // theme selecter
@@ -286,6 +296,17 @@ if (cloak) {
         saveSettings();
     })
 }
+
+const ctrlW = document.getElementById('ctrlW-toggle')
+if (ctrlW) {
+    ctrlW.checked = settings.ctrlW;
+    ctrlW.addEventListener('change', (e) => {
+        settings.ctrlW = e.target.checked;
+        updateCtrlW();
+        saveSettings();
+    })
+}
+// #endregion 
 
 
 // --- START BUTTON EASTER EGG: RANDOM ROLLING/FALLING IMAGES ---
