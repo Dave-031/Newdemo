@@ -85,17 +85,17 @@
         <p style="font-size: 14px; color: #222; margin: 0; line-height: 1.4; font-weight: 500;">Double-click the title bar or click the Maximize button [🗖] at the top right to open this window fully.</p>
       </div>
       
-      <!-- Maximized View: Game list and search -->
+      <!-- Maximized View: Game list and search 
       <div class="full-content" style="padding: 15px; box-sizing: border-box; flex-direction: column; height: 100%;">
-        
-        <h1 style="font-size: 24px; margin: 0 0 12px 0; font-weight: bold; color: #000; text-align: center;">PC GAMES</h1>
-        
+        --->
+        <h1 style="font-size: 24px; margin: 0 0 12px 0; font-weight: bold; color: #000; text-align: center;">COMING SOON</h1>
+        <!--
         <div style="margin-bottom: 15px;">
           <input type="text" id="pcgames-search" placeholder="Search PC games..." style="width: 100%; box-sizing: border-box; padding: 6px 8px; font-size: 13px; font-family: sans-serif;">
         </div>
 
         <div id="pcgames-list" style="flex-grow: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; align-content: start; padding-right: 4px;">
-          <!-- Items will be loaded dynamically via JavaScript -->
+        --->
         </div>
       </div>
     </div>
@@ -221,6 +221,12 @@
                 <option value="meow3">Meow 3</option>
               </select>
             </label>
+
+            <label for="cloak-toggle" style="display: flex; align-items: center; justify-content: space-between; font-size: 13px; font-weight: bold; cursor: pointer; flex-wrap: nowrap; gap: 25px; margin-top: 10px;">
+              <span style="display: block;">Enable cloak</span>
+              <input id="cloak-toggle" type="checkbox" checked>
+            </label>
+            
           </fieldset>
 
           <fieldset style="border: 2px solid #808080; padding: 10px; margin-top: 10px;">
@@ -404,15 +410,22 @@
   </div>
 
   <!-- Popup (kept exclusively for YT Playables messages) -->
+  <!-- .window / .window-body: same classes every real window uses, so the
+       active theme.css (98.css/xp.css/7.css) skins this with the real
+       window frame (border/shadow/rounded corners) instead of a flat,
+       unstyled box. It's excluded from the desktop window manager's
+       .window sweep in script.js (see windowsList), so it stays a
+       fixed, centered, non-draggable popup rather than becoming a
+       tracked desktop window. -->
   <div id="popupOverlay">
-    <div class="popup-box">
+    <div class="popup-box window">
       <div class="title-bar">
         <div class="title-bar-text" id="popupTitle">Title</div>
         <div class="title-bar-controls">
           <button aria-label="Close" id="popupClose" onclick="closePopup()"></button>
         </div>
       </div>
-      <div class="popup-body" id="popupBody">
+      <div class="popup-body window-body" id="popupBody">
         Content will be here
       </div>
     </div>

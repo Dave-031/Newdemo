@@ -1,6 +1,6 @@
 const HTML_URL = "https://cdn.jsdelivr.net/gh/freebuisness/html@main/"; // set this to the real base URL
 const COVER_URL = "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/"; // same idea for {COVER_URL}
-
+const sitename = ""
 // --- HIDDEN GAMES ---
 // Add a game's exact name (or its link/url) here to hide its card from the
 // GAMES window, even though it's still present in zones.json / testing.json.
@@ -16,7 +16,7 @@ const GAMES_IGNORE_LIST = [
 // Same idea, but for the PC GAMES window.
 const PCGAMES_IGNORE_LIST = [
 ];
-
+// what does this do its never called???
 function resolveUrl(template, base) {
     return template.replace('{HTML_URL}', base);
 }
@@ -46,7 +46,7 @@ const wallpapers = {
     'https://unpkg.com/7.css': "https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@18303d7b050c223085e4065a091ce377e058be01/images/7_wallpaper.jpg"
 };
 // assigns defualt settings
-const STORAGE_KEY = 'windows_gamesite';
+const STORAGE_KEY = 'brightFuture';
 const defaultSettings = {
     selectedTheme: 'https://unpkg.com/7.css',
     customBackgrounds: {},
@@ -54,7 +54,8 @@ const defaultSettings = {
     showCat: true,
     catScale: 1,
     enableMeow: true,
-    meowSound: 'meow1'
+    meowSound: 'meow1',
+    cloak: false
 };
 // loads preveusly saved setttings
 
@@ -70,7 +71,8 @@ function loadSettings() {
             showCat: parsed.showCat !== undefined ? parsed.showCat : defaultSettings.showCat,
             catScale: parsed.catScale !== undefined ? parsed.catScale : defaultSettings.catScale,
             enableMeow: parsed.enableMeow !== undefined ? parsed.enableMeow : defaultSettings.enableMeow,
-            meowSound: parsed.meowSound || defaultSettings.meowSound
+            meowSound: parsed.meowSound || defaultSettings.meowSound,
+            cloak: parsed.cloak !== undefined ? parsed.cloak : defaultSettings.cloak
         };
     } catch (err) {
         return { ...defaultSettings, customBackgrounds: {} };
@@ -80,13 +82,13 @@ function loadSettings() {
 function saveSettings() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
 }
-// pulls the image for wall paper
+// pulls the image for wallpaper
 function getBackgroundForTheme(themeValue) {
     const custom = settings.customBackgrounds[themeValue];
     if (custom) return custom;
     return wallpapers[themeValue] || '';
 }
-// sets the custom wall paper
+// sets the custom wallpaper
 function updateBackgroundStatus() {
     document.querySelectorAll('.theme-bg-status').forEach(statusEl => {
         const themeValue = statusEl.dataset.theme;
@@ -149,7 +151,20 @@ document.body.addEventListener('click', (e) => {
         document.querySelectorAll('.desktop-icon').forEach(i => i.classList.remove('selected'));
     }
 });
+// updates the cloak checkbox
+function updateCloakVis() {
+    if (settings.cloak) {
+        let link = document.querySelector("link[rel*='icon']");
+        link.href = 'https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@da8f66de45396943270ef98ced3b3916eccf76d9/images/cloak.png';
 
+        document.title = 'ㅤ';
+    } else {
+        let link = document.querySelector("link[rel*='icon']");
+        link.href = 'https://cdn.jsdelivr.net/gh/Dave-031/bazinga-games@c51e4ab592074d988d82c7a3cf2b136097aa78c4/bright%20future/images/brightlogo.png'
+
+        document.title = "Bright Future"
+    }
+}
 
 function updateClockVisibility() {
     const clockElement = document.getElementById('taskbar-clock');
@@ -199,7 +214,7 @@ function applyTheme(themeValue) {
 
 let settings = loadSettings();
 settings.showCat = true; // Taskbar cat is locked visible for now — reserved for a future feature
-
+// theme selecter
 document.querySelectorAll('input[name="theme-selection-group"]').forEach(radio => {
     radio.addEventListener('change', (e) => {
         if (e.target.checked) {
@@ -214,6 +229,7 @@ if (quickThemeSelect) {
         applyTheme(e.target.value);
     });
 }
+
 
 const showClockToggle = document.getElementById('show-clock-toggle');
 if (showClockToggle) {
@@ -253,11 +269,24 @@ if (catSizeSlider) {
 const enableMeowToggle = document.getElementById('enable-meow-toggle');
 if (enableMeowToggle) {
     enableMeowToggle.checked = settings.enableMeow;
-    enableMeowToggle.addEventListener('change', (e) => {
+    enableMeowToggle.addEventListener('change', (e) => {x
         settings.enableMeow = e.target.checked;
         saveSettings();
     });
 }
+
+//enables the cloakxena
+
+const cloak = document.getElementById('cloak-toggle')
+if (cloak) {
+    cloak.checked = settings.cloak;
+    cloak.addEventListener('change', (e) => {
+        settings.cloak = e.target.checked;
+        updateCloakVis();
+        saveSettings();
+    })
+}
+
 
 // --- START BUTTON EASTER EGG: RANDOM ROLLING/FALLING IMAGES ---
 // Secret trick: click the Start button 10 times in a row and 2 random
@@ -497,12 +526,12 @@ if (importSettingsBtn && importSettingsInput) {
     });
 }
 
-updateBackgroundStatus();
-updateClockVisibility();
-applyTheme(settings.selectedTheme);
-updateCatSettings();
 
-const windowsList = document.querySelectorAll('.window:not(#instructions-window)');
+// .popup-box is excluded here on purpose — it carries the .window class
+// purely to pick up the theme.css window frame styling (see demo.html),
+// but it's a fixed, centered YT Playables popup, not a draggable desktop
+// window, so it must never enter the taskbar/cascade/drag system below.
+const windowsList = document.querySelectorAll('.window:not(#instructions-window):not(.popup-box)');
 const standardWindowMap = new Map();
 const imageWindowMap = new Map();
 
@@ -527,7 +556,7 @@ function cascadePosition(windowEl, indexOverride) {
 
     let stepIndex = indexOverride;
     if (stepIndex === undefined) {
-        stepIndex = Array.from(document.querySelectorAll('.window:not(#instructions-window)'))
+        stepIndex = Array.from(document.querySelectorAll('.window:not(#instructions-window):not(.popup-box)'))
             .filter(w => w !== windowEl && w.style.display !== 'none' && !w.classList.contains('maximized'))
             .length;
     }
@@ -1104,11 +1133,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // GAMES window: now driven entirely by the zone-viewer script at the
     // bottom of this file (search '#searchBar' / '#container' section below).
-    // It fetches zones.json itself, renders the #container grid, and opens
-    // a clicked game in the in-page #zoneViewer window (or the YT Playables
-    // popup) instead of a new tab. GAMES_IGNORE_LIST and the secondary
-    // testing.json source above are NOT applied by that script — see the
-    // note at the top of that section if you want them wired back in.
+    // It fetches zones.json AND testing.json, merges them, filters out
+    // anything in GAMES_IGNORE_LIST (matched by name or url), renders the
+    // #container grid, and opens a clicked game in the in-page #zoneViewer
+    // window (or the YT Playables popup) instead of a new tab.
 });
 
 (function setupChangelogs() {
@@ -1486,15 +1514,19 @@ document.body.addEventListener('mousedown', (e) => {
 })();
 
 // ============================================================
-// GAMES window — zone viewer (pasted in verbatim, unmodified)
+// GAMES window — zone viewer
 // Drives #searchBar / #container in the GAMES window, plus the
 // #zoneViewer game window and the #popupOverlay YT Playables popup.
+// Loads zones.json + testing.json (see listZones) and respects
+// GAMES_IGNORE_LIST from the top of this file.
 // ============================================================
 const container = document.getElementById('container');
 const zoneViewer = document.getElementById('zoneViewer');
 let zoneFrame = document.getElementById('zoneFrame');
 const searchBar = document.getElementById('searchBar');
 let zonesURL = "https://cdn.jsdelivr.net/gh/freebuisness/assets@main/zones.json";
+// Secondary source, same format as zones.json — merged in alongside it below.
+let testingURL = "https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@1e4feb06cf41793be1cd80031cb26e38856f8df2/testing.json";
 const coverURL = "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/";
 const htmlURL = "https://cdn.jsdelivr.net/gh/freebuisness/html@main/";
 
@@ -1505,9 +1537,38 @@ let zones = [];
 
 async function listZones() {
     try {
-        const response = await fetch(zonesURL+"?t="+Date.now());
-        const json = await response.json();
-        zones = json;
+        // Fetch zones.json + testing.json and merge them, same pattern as
+        // setupGameGrid's multi-source merge above. One source failing
+        // (e.g. testing.json being temporarily unreachable) doesn't blank
+        // out the whole grid — it just falls back to whatever succeeded.
+        const sources = [zonesURL, testingURL];
+        const results = await Promise.all(sources.map(url =>
+            fetch(url + "?t=" + Date.now())
+                .then(response => response.json())
+                .then(json => Array.isArray(json) ? json : [])
+                .catch(error => {
+                    console.error(`Error loading zones from ${url}:`, error);
+                    return null;
+                })
+        ));
+
+        const succeeded = results.some(r => r !== null);
+        if (!succeeded) throw new Error('Failed to load zones.json and testing.json');
+
+        const merged = results.filter(r => r !== null).flat();
+
+        // Apply GAMES_IGNORE_LIST — entries can be a game's exact name or
+        // its link/url (matching is case-insensitive, whitespace-trimmed).
+        const ignored = new Set(
+            GAMES_IGNORE_LIST.map(entry => (entry || '').trim().toLowerCase())
+        );
+        zones = ignored.size === 0
+            ? merged
+            : merged.filter(zone => {
+                const nameKey = (zone.name || '').trim().toLowerCase();
+                const urlKey = (zone.url || '').trim().toLowerCase();
+                return !ignored.has(nameKey) && !ignored.has(urlKey);
+            });
         
         // Default sort by ID
         zones.sort((a, b) => a.id - b.id);
@@ -1631,8 +1692,11 @@ function openZone(file) {
                 document.getElementById('popupTitle').textContent = file.name;
                 const pb = document.getElementById('popupBody');
                 pb.contentEditable = false;
-                pb.innerHTML = '<p style="margin-top:0;">This is a YouTube Playables game, so it only works in its own tab. It\'ll open in a <strong>new tab</strong>.</p>'
-                    + '<button class="settings-button" id="ytOpenBtn">Open in New Tab</button>';
+                // Plain <p>/<button> markup on purpose — #popupOverlay's CSS
+                // (styles.css, themed per data-theme) styles these directly,
+                // same as every other themed window on the site.
+                pb.innerHTML = '<p>This is a YouTube Playables game, so it only works in its own tab. It\'ll open in a <strong>new tab</strong>.</p>'
+                    + '<button id="ytOpenBtn">Open in New Tab</button>';
                 document.getElementById('ytOpenBtn').onclick = function () {
                     const newWindow = window.open("about:blank", "_blank");
                     if (!newWindow) {
@@ -1711,6 +1775,11 @@ function closePopup() {
 }
 
 listZones();
+updateBackgroundStatus();
+updateClockVisibility();
+applyTheme(settings.selectedTheme);
+updateCatSettings();
+updateCloakVis();
 
 HTMLCanvasElement.prototype.toDataURL = function (...args) {
     return "";

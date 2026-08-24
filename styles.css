@@ -344,7 +344,7 @@ div[id^="win-uploaded-"] .window-body {
 }
 
 /* Force checkbox visibility and alignment across all themes */
-#show-clock-toggle, #show-cat-toggle, #enable-meow-toggle {
+#show-clock-toggle, #show-cat-toggle, #enable-meow-toggle, #cloak-toggle {
     position: relative !important;
     width: 18px !important;
     height: 18px !important;
@@ -360,7 +360,7 @@ div[id^="win-uploaded-"] .window-body {
     appearance: auto !important;
 }
 
-#show-clock-toggle:checked, #show-cat-toggle:checked, #enable-meow-toggle:checked {
+#show-clock-toggle:checked, #show-cat-toggle:checked, #enable-meow-toggle:checked, #cloak-toggle:checked{
     background-color: #fff !important;
 }
 
@@ -842,9 +842,18 @@ div[id^="win-uploaded-"] .window-body {
     z-index: 300000;
 }
 
+/* .popup-box also carries the .window class (see demo.html) so 98.css/
+   xp.css/7.css give it the real window frame — border, shadow, rounded
+   corners on xp/7 — instead of a flat, unstyled box. But the site's own
+   .window rules in this file (above) are built for draggable desktop
+   windows, so they're overridden here: the popup stays a fixed, centered
+   overlay at its own size instead of an absolutely-positioned 320px
+   window. */
 #popupOverlay .popup-box {
-    width: 380px;
+    position: static;
+    width: 380px !important;
     max-width: 90vw;
+    height: auto !important;
     background: #c0c0c0;
 }
 
@@ -855,6 +864,10 @@ div[id^="win-uploaded-"] .window-body {
     font-size: 13px;
     line-height: 1.5;
     color: #000;
+}
+
+#popupOverlay .popup-body p:first-child {
+    margin-top: 0;
 }
 
 #popupOverlay .popup-body button {
