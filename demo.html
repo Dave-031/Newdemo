@@ -34,7 +34,7 @@
       <div class="desktop-icon-text">Changelogs</div>
     </div>
   </div>
-
+<!-- #region the apps logic -->
   <div class="window glass active" id="win-games">
     <div class="title-bar">
       <div class="title-bar-text"><span class="win-icon icon-games"></span>GAMES</div>
@@ -231,6 +231,14 @@
               <span style="display: block;">Disable Ctrl+w</span>
               <input id="ctrlW-toggle" type="checkbox" checked>
             </label>
+
+            <label for="cat-theme-select" style="display: flex; align-items: center; justify-content: space-between; font-size: 13px; font-weight: bold; cursor: pointer; flex-wrap: nowrap; gap: 25px; margin-top: 10px;">
+              <span style="display: block;">cat theme</span>
+              <select id="cat-theme-select" style="cursor: pointer;">
+                <option value="cat">cat</option>
+                <option value="meevin">meevin</option>
+              </select>
+            </label>
             
           </fieldset>
 
@@ -356,7 +364,7 @@
         </div>
     </div>
   </div>
-
+  <!-- #endregion -->
   <div id="taskbar">
       <button id="start-btn"><span class="win-icon icon-start"></span>Start</button>
       <!-- Re-order Layout button disabled — commented out, not deleted -->

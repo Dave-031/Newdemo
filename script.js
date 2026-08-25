@@ -56,7 +56,8 @@ const defaultSettings = {
     enableMeow: true,
     meowSound: 'meow1',
     cloak: false,
-    ctrlW: false
+    ctrlW: false,
+    CatTheme: 'cat'
 };
 // loads preveusly saved setttings
 
@@ -74,7 +75,8 @@ function loadSettings() {
             enableMeow: parsed.enableMeow !== undefined ? parsed.enableMeow : defaultSettings.enableMeow,
             meowSound: parsed.meowSound || defaultSettings.meowSound,
             cloak: parsed.cloak !== undefined ? parsed.cloak : defaultSettings.cloak,
-            ctrlW: parsed.ctrlW !== undefined ? parsed.ctrlW : defaultSettings.ctrlW
+            ctrlW: parsed.ctrlW !== undefined ? parsed.ctrlW : defaultSettings.ctrlW,
+            catTheme: parsed.catTheme || defaultSettings.catTheme
         };
     } catch (err) {
         return { ...defaultSettings, customBackgrounds: {} };
@@ -186,6 +188,10 @@ function updateClockVisibility() {
     }
 }
 
+function ChangeCatTheme(theme) {
+    
+}
+
 function updateCatSettings() {
     const catEl = document.getElementById('taskbar-cat');
     if (catEl) {
@@ -279,6 +285,19 @@ if (catSizeSlider) {
     });
 }
 
+const meowSoundSelect = document.getElementById('meow-sound-select');
+    if (meowSoundSelect) {
+        meowSoundSelect.value = settings.meowSound;
+        meowSoundSelect.addEventListener('change', (e) => {
+            settings.meowSound = e.target.value;
+            saveSettings();
+            const newSrc = meowSoundUrls[settings.meowSound];
+            if (newSrc) {
+                meowSound.src = newSrc;
+            }
+        });
+    }
+
 const enableMeowToggle = document.getElementById('enable-meow-toggle');
 if (enableMeowToggle) {
     enableMeowToggle.checked = settings.enableMeow;
@@ -310,6 +329,16 @@ if (ctrlW) {
         saveSettings();
     })
 }
+
+const catThemeSelect = document.getElementById('cat-theme-select');
+    if (catThemeSelect) {
+        catThemeSelect.value = settings.catTheme;
+        catThemeSelect.addEventListener('change', (e) => {
+            settings.catTheme = e.target.value;
+            ChangeCatTheme(settings.catTheme);
+            saveSettings();
+        })
+    }
 // #endregion 
 
 
@@ -920,19 +949,6 @@ document.getElementById('image-uploader').addEventListener('change', function(e)
         if (!meowSound.paused) return;
 
         meowSound.play().catch(() => {});
-    }
-
-    const meowSoundSelect = document.getElementById('meow-sound-select');
-    if (meowSoundSelect) {
-        meowSoundSelect.value = settings.meowSound;
-        meowSoundSelect.addEventListener('change', (e) => {
-            settings.meowSound = e.target.value;
-            saveSettings();
-            const newSrc = meowSoundUrls[settings.meowSound];
-            if (newSrc) {
-                meowSound.src = newSrc;
-            }
-        });
     }
 
     function clampCatLeft(left) {
