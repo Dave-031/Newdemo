@@ -344,7 +344,7 @@ div[id^="win-uploaded-"] .window-body {
 }
 
 /* Force checkbox visibility and alignment across all themes */
-#show-clock-toggle, #show-cat-toggle, #enable-meow-toggle, #cloak-toggle {
+#show-clock-toggle, #show-cat-toggle, #enable-meow-toggle, #cloak-toggle, #ctrlW-toggle {
     position: relative !important;
     width: 18px !important;
     height: 18px !important;
@@ -360,7 +360,7 @@ div[id^="win-uploaded-"] .window-body {
     appearance: auto !important;
 }
 
-#show-clock-toggle:checked, #show-cat-toggle:checked, #enable-meow-toggle:checked, #cloak-toggle:checked{
+#show-clock-toggle:checked, #show-cat-toggle:checked, #enable-meow-toggle:checked, #cloak-toggle:checked, #ctrlW-toggle:checked{
     background-color: #fff !important;
 }
 

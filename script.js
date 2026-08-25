@@ -157,11 +157,9 @@ document.body.addEventListener('click', (e) => {
 //disables ctrlW
 function updateCtrlW() {
     if (settings.ctrlW) {
-        window.addEventListener('beforeunload', (event) => {
+        window.addEventListener('beforeunload', function (e) {
             event.preventDefault();
             event.returnValue = '';
-
-
         })
     }
 }
@@ -284,8 +282,9 @@ if (catSizeSlider) {
 const enableMeowToggle = document.getElementById('enable-meow-toggle');
 if (enableMeowToggle) {
     enableMeowToggle.checked = settings.enableMeow;
-    enableMeowToggle.addEventListener('change', (e) => {x
+    enableMeowToggle.addEventListener('change', (e) => {
         settings.enableMeow = e.target.checked;
+
         saveSettings();
     });
 }
