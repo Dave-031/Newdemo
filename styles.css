@@ -359,7 +359,7 @@ div[id^="win-uploaded-"] .window-body {
     appearance: auto !important;
 }
 
-#show-clock-toggle:checked, #show-cat-toggle:checked, #enable-meow-toggle:checked, #cloak-toggle:checked, #ctrlW-toggle:checked #dark-mode-toggle:checked {
+#show-clock-toggle:checked, #show-cat-toggle:checked, #enable-meow-toggle:checked, #cloak-toggle:checked, #ctrlW-toggle:checked{
     background-color: #fff !important;
 }
 
@@ -878,49 +878,3 @@ div[id^="win-uploaded-"] .window-body {
 [data-theme="win98"] #popupOverlay .popup-box { background: #c0c0c0; }
 [data-theme="winxp"] #popupOverlay .popup-box { background: linear-gradient(to bottom, #ece9d8, #d9d3b8); }
 [data-theme="win7"] #popupOverlay .popup-box { background: linear-gradient(to bottom, #e5eefc, #ffffff); }
-/* ============================================================
-   DARK MODE
-   ============================================================ */
-body.dark-mode {
-    background-color: #101010;
-}
-
-/* Global text color override — beats the base `p, h1, h2 { color: black; }` rule */
-body.dark-mode p,
-body.dark-mode h1,
-body.dark-mode h2,
-body.dark-mode label,
-body.dark-mode span,
-body.dark-mode legend {
-    color: #e0e0e0 !important;
-}
-
-/* Window bodies — theme .css (98/xp/7) sets these light by default */
-body.dark-mode .window-body {
-    background-color: #232323 !important;
-    color: #e0e0e0 !important;
-}
-
-body.dark-mode fieldset {
-    border-color: #555 !important;
-    background-color: #1c1c1c !important;
-}
-
-body.dark-mode input[type="text"],
-body.dark-mode select {
-    background-color: #2e2e2e !important;
-    color: #e0e0e0 !important;
-    border-color: #555 !important;
-}
-
-body.dark-mode input[type="text"]::placeholder {
-    color: #888 !important;
-}
-
-/* PC Games / Games cards */
-body.dark-mode .game-card,
-body.dark-mode .pc-game-card {
-    background-color: #232323 !important;
-    color: #e0e0e0 !important;
-    border-color: #555 !important;
-}
