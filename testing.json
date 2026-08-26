@@ -1,16 +1,17 @@
 [
   {
-    "id": 0,
+    "id": 999990,
     "name": "testingcard",
     "cover": "{COVER_URL}/dc.png",
     "url": "testing"
   },
   {
-    "id": 0,
+    "id": 999990,
     "name": "testingcard2",
     "cover": "{COVER_URL}/0.png",
-    "url": "{HTML_URL}/0.html",
+    "url": "",
     "author": "Azur Games, Playgendary",
     "authorLink": "https://azurgames.com"
   }
 ]
+

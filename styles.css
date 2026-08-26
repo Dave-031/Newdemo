@@ -344,7 +344,7 @@ div[id^="win-uploaded-"] .window-body {
 }
 
 /* Force checkbox visibility and alignment across all themes */
-#show-clock-toggle, #show-cat-toggle, #enable-meow-toggle, #cloak-toggle, #ctrlW-toggle {
+#show-clock-toggle, #show-cat-toggle, #enable-meow-toggle, #cloak-toggle, #ctrlW-toggle, #dark-mode-toggle {
     position: relative !important;
     width: 18px !important;
     height: 18px !important;
@@ -355,12 +355,11 @@ div[id^="win-uploaded-"] .window-body {
     visibility: visible !important;
     opacity: 1 !important;
     flex-shrink: 0 !important;
-    /* This restores the actual checkmark graphic */
     -webkit-appearance: auto !important;
     appearance: auto !important;
 }
 
-#show-clock-toggle:checked, #show-cat-toggle:checked, #enable-meow-toggle:checked, #cloak-toggle:checked, #ctrlW-toggle:checked{
+#show-clock-toggle:checked, #show-cat-toggle:checked, #enable-meow-toggle:checked, #cloak-toggle:checked, #ctrlW-toggle:checked #dark-mode-toggle:checked {
     background-color: #fff !important;
 }
 
@@ -700,16 +699,15 @@ div[id^="win-uploaded-"] .window-body {
 [data-theme="win7"] .icon-start      { background-image: url('https://i.postimg.cc/tn9tbZrt/7icon.png'); }
 
 /* ============================================================
-   GAMES WINDOW — ZONE VIEWER + PLAYABLES POPUP
-   The markup/behavior here comes straight from the zone-viewer
-   script (search #searchBar / #container / #zoneViewer /
-   #popupOverlay in script.js) — this section only makes it match
-   whichever OS theme (98/xp/7) is currently active. Buttons are
-   plain <button> elements on purpose so the active theme.css
-   (98.css/xp.css/7.css) skins them automatically, same as every
-   other button on the site (Submit, OK, Upload, etc). It is NOT
-   part of the draggable window manager (no .window class), so it
-   never gets a taskbar entry and can't be dragged/minimized.
+   DO NOT INTERACT WITH THE BELOW ZONE GRID STYLING UNLESS YOU KNOW WHAT YOU'RE DOING
+   This is the grid layout for the GAMES window's game cards. It is
+   intentionally separate from the PC GAMES list cards above, because the
+   GAMES window is a full-screen maximized window that needs to scale
+   dynamically to the user's viewport, while the PC GAMES list is a fixed
+   size window that is always 320px wide. The two grids are similar, but
+   not identical, and the GAMES window's grid is more complex because it
+   needs to be responsive and fluid. The GAMES window's grid is also the only
+   one that is allowed to scale up to full-screen, so it has its own set of
    ============================================================ */
 
 /* --- Zone grid (the GAMES window's game cards) --- */
@@ -880,3 +878,49 @@ div[id^="win-uploaded-"] .window-body {
 [data-theme="win98"] #popupOverlay .popup-box { background: #c0c0c0; }
 [data-theme="winxp"] #popupOverlay .popup-box { background: linear-gradient(to bottom, #ece9d8, #d9d3b8); }
 [data-theme="win7"] #popupOverlay .popup-box { background: linear-gradient(to bottom, #e5eefc, #ffffff); }
+/* ============================================================
+   DARK MODE
+   ============================================================ */
+body.dark-mode {
+    background-color: #101010;
+}
+
+/* Global text color override — beats the base `p, h1, h2 { color: black; }` rule */
+body.dark-mode p,
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode label,
+body.dark-mode span,
+body.dark-mode legend {
+    color: #e0e0e0 !important;
+}
+
+/* Window bodies — theme .css (98/xp/7) sets these light by default */
+body.dark-mode .window-body {
+    background-color: #232323 !important;
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode fieldset {
+    border-color: #555 !important;
+    background-color: #1c1c1c !important;
+}
+
+body.dark-mode input[type="text"],
+body.dark-mode select {
+    background-color: #2e2e2e !important;
+    color: #e0e0e0 !important;
+    border-color: #555 !important;
+}
+
+body.dark-mode input[type="text"]::placeholder {
+    color: #888 !important;
+}
+
+/* PC Games / Games cards */
+body.dark-mode .game-card,
+body.dark-mode .pc-game-card {
+    background-color: #232323 !important;
+    color: #e0e0e0 !important;
+    border-color: #555 !important;
+}

@@ -1,6 +1,5 @@
 const HTML_URL = "https://cdn.jsdelivr.net/gh/freebuisness/html@main/"; // set this to the real base URL
 const COVER_URL = "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/"; // same idea for {COVER_URL}
-const sitename = ""
 // --- HIDDEN GAMES ---
 // Add a game's exact name (or its link/url) here to hide its card from the
 // GAMES window, even though it's still present in zones.json / testing.json.
@@ -57,7 +56,8 @@ const defaultSettings = {
     meowSound: 'meow1',
     cloak: false,
     ctrlW: false,
-    CatTheme: 'cat'
+    CatTheme: 'cat',
+    darkMode: false
 };
 // loads preveusly saved setttings
 
@@ -76,7 +76,8 @@ function loadSettings() {
             meowSound: parsed.meowSound || defaultSettings.meowSound,
             cloak: parsed.cloak !== undefined ? parsed.cloak : defaultSettings.cloak,
             ctrlW: parsed.ctrlW !== undefined ? parsed.ctrlW : defaultSettings.ctrlW,
-            catTheme: parsed.catTheme || defaultSettings.catTheme
+            catTheme: parsed.catTheme || defaultSettings.catTheme,
+            darkMode: parsed.darkMode !== undefined ? parsed.darkMode : defaultSettings.darkMode
         };
     } catch (err) {
         return { ...defaultSettings, customBackgrounds: {} };
@@ -188,6 +189,10 @@ function updateClockVisibility() {
     }
 }
 
+function updateDarkMode() {
+    document.body.classList.toggle('dark-mode', settings.darkMode);
+}
+
 function ChangeCatTheme(theme) {
     
 }
@@ -256,6 +261,18 @@ if (showClockToggle) {
     showClockToggle.addEventListener('change', (e) => {
         settings.showClock = e.target.checked;
         updateClockVisibility();
+        saveSettings();
+    });
+
+}
+
+
+const darkModeToggle = document.getElementById('dark-mode-toggle');
+if (darkModeToggle) {
+    darkModeToggle.checked = settings.darkMode;
+    darkModeToggle.addEventListener('change', (e) => {
+        settings.darkMode = e.target.checked;
+        updateDarkMode();
         saveSettings();
     });
 }
@@ -820,7 +837,39 @@ function setupWindowLogic(windowEl, isImageWindow = false) {
 windowsList.forEach(windowEl => {
     setupWindowLogic(windowEl, false);
 });
+// --- PC GAMES WARNING POPUP ---
+document.addEventListener('dblclick', (e) => {
+    const icon = e.target.closest('.desktop-icon[data-target="win-pcgames"]');
+    if (!icon) return;
 
+    // Intercept before the icon's own dblclick handlers can open the window
+    e.stopPropagation();
+    e.preventDefault();
+
+    const proceed = confirm("WARNING:THESE ARE NOT PLAYABLE ON CHROMEBOOKS ONLY FOR COMPUTERS IN CLASSES WITH COMPUTERS.");
+    if (!proceed) {
+        icon.classList.remove('selected');
+        return;
+    }
+
+    // Same open logic used by the normal icon dblclick handlers
+    const targetId = icon.dataset.target;
+    const windowEl = document.getElementById(targetId);
+    const taskBtn = standardWindowMap.get(targetId);
+
+    if (windowEl && taskBtn) {
+        windowEl.style.display = 'flex';
+        if (windowEl.dataset.userMoved !== 'true') {
+            cascadePosition(windowEl);
+        }
+        if (!document.getElementById('taskbar-items-container').contains(taskBtn)) {
+            document.getElementById('taskbar-items-container').appendChild(taskBtn);
+        }
+        highestZ++;
+        windowEl.style.zIndex = highestZ;
+    }
+    icon.classList.remove('selected');
+}, true); // <-- capture: true is essential here
 // Start with a clean desktop — windows are positioned but stay closed
 // until the user double-clicks a desktop icon to open one.
 applyDefaultLayout({ open: false });
@@ -1170,7 +1219,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // PC GAMES: single JSON source, same format as zones.json below.
     // Replace '1.json' with your actual JSON endpoint/file path for PC GAMES.
     // Clicking a card navigates the current tab to game.link (default openMode).
-    setupGameGrid('1.json', 'pcgames-list', 'pcgames-search', PCGAMES_IGNORE_LIST);
+    setupGameGrid('pcGames.json', 'pcgames-list', 'pcgames-search', PCGAMES_IGNORE_LIST);
 
     // GAMES window: now driven entirely by the zone-viewer script at the
     // bottom of this file (search '#searchBar' / '#container' section below).
@@ -1617,28 +1666,6 @@ async function listZones() {
         
         displayZones(zones);
 
-        try {
-            const search = new URLSearchParams(window.location.search);
-            const id = search.get('id');
-            const embed = window.location.hash.includes("embed");
-            if (id) {
-                const zone = zones.find(zone => zone.id + '' == id + '');
-                if (zone) {
-                    if (embed) {
-                        if (zone.url.startsWith("http")) {
-                            window.open(zone.url, "_blank");
-                        } else {
-                            const url = zoneURL(zone.url);
-                            fetch(url+"?t="+Date.now()).then(response => response.text()).then(html => {
-                                document.documentElement.innerHTML = injectZoneBase(html, url);
-                            }).catch(error => alert("Failed to load zone: " + error));
-                        }
-                    } else {
-                        openZone(zone);
-                    }
-                }
-            }
-        } catch(error){}
     } catch (error) {
         console.error(error);
         container.innerHTML = `Error loading zones: ${error}`;
@@ -1815,13 +1842,6 @@ function closePopup() {
     document.getElementById('popupOverlay').style.display = "none";
 }
 
-listZones();
-updateBackgroundStatus();
-updateClockVisibility();
-applyTheme(settings.selectedTheme);
-updateCatSettings();
-updateCloakVis();
-
 HTMLCanvasElement.prototype.toDataURL = function (...args) {
     return "";
 };
@@ -1829,3 +1849,15 @@ HTMLCanvasElement.prototype.toDataURL = function (...args) {
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
     navigator.serviceWorker.register(new URL('sw.js', location.href).href).catch(() => {});
 }
+
+
+try {
+    listZones();
+    updateBackgroundStatus();
+    updateClockVisibility();
+    applyTheme(settings.selectedTheme);
+    updateCatSettings();
+    updateCloakVis();
+    updateDarkMode();
+} catch (err) {
+    console.error('Init error:', err); }
