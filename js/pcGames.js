@@ -1,3 +1,40 @@
+
+document.addEventListener('dblclick', (e) => {
+    const icon = e.target.closest('.desktop-icon[data-target="win-pcgames"]');
+    if (!icon) return;
+
+    // Intercept before the icon's own dblclick handlers can open the window
+    e.stopPropagation();
+    e.preventDefault();
+
+    const proceed = confirm("WARNING:THESE ARE NOT PLAYABLE ON CHROMEBOOKS ONLY FOR COMPUTERS IN CLASSES WITH THEM.");
+    if (!proceed) {
+        icon.classList.remove('selected');
+        return;
+    }
+
+    // Same open logic used by the normal icon dblclick handlers
+    const targetId = icon.dataset.target;
+    const windowEl = document.getElementById(targetId);
+    const taskBtn = standardWindowMap.get(targetId);
+
+    if (windowEl && taskBtn) {
+        windowEl.style.display = 'flex';
+        if (windowEl.dataset.userMoved !== 'true') {
+            cascadePosition(windowEl);
+        }
+        if (!document.getElementById('taskbar-items-container').contains(taskBtn)) {
+            document.getElementById('taskbar-items-container').appendChild(taskBtn);
+        }
+        highestZ++;
+        windowEl.style.zIndex = highestZ;
+    }
+    icon.classList.remove('selected');
+}, true); // <-- capture: true is essential here
+// Start with a clean desktop — windows are positioned but stay closed
+// until the user double-clicks a desktop icon to open one.
+applyDefaultLayout({ open: false });
+
 document.addEventListener("DOMContentLoaded", function() {
 
     // Opens a blank window immediately (so the browser doesn't treat it as a

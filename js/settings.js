@@ -1,5 +1,21 @@
 //These are the settings fucntions
 //default to base settings if not already assigned
+
+const STORAGE_KEY = 'brightFuture';
+const defaultSettings = {
+    selectedTheme: 'https://unpkg.com/7.css',
+    customBackgrounds: {},
+    showClock: true,
+    showCat: true,
+    catScale: 1,
+    enableMeow: true,
+    meowSound: 'meow1',
+    cloak: false,
+    ctrlW: false,
+    catTheme: 'cat',
+    darkMode: false
+};
+
 function loadSettings() {
     try {
         const stored = localStorage.getItem(STORAGE_KEY);
@@ -30,8 +46,8 @@ function saveSettings() {
 function updateCtrlW() {
     if (settings.ctrlW) {
         window.addEventListener('beforeunload', function (e) {
-            event.preventDefault();
-            event.returnValue = '';
+            e.preventDefault();
+            e.returnValue = '';
         })
     }
 }

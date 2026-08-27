@@ -1,5 +1,11 @@
 const standardWindowMap = new Map();
 const imageWindowMap = new Map();
+const CASCADE_BASE_LEFT = 60;
+const CASCADE_BASE_TOP = 60;
+const CASCADE_STEP = 32;
+const TASKBAR_HEIGHT = 40;
+const windowsList = document.querySelectorAll('.window:not(#instructions-window):not(.popup-box)');
+const taskbarContainer = document.getElementById('taskbar-items-container');
 
 const themeStylesheet = document.getElementById('theme-stylesheet');
 let highestZ = 10;
@@ -15,6 +21,7 @@ function getIconClass(windowId) {
   if (windowId.startsWith('win-uploaded-')) return 'icon-image';
   return '';
 }
+
 function cascadePosition(windowEl, indexOverride) {
     const width = windowEl.offsetWidth || 320;
     const height = windowEl.offsetHeight || 200;
@@ -44,7 +51,7 @@ function applyDefaultLayout(options = {}) {
 
     windowsList.forEach((windowEl, index) => {
         windowEl.classList.remove('maximized');
-        windowEl.style.display = open ? ((windowEl.id === 'win-pcgames') ? 'all' : 'flex') : 'none';
+        windowEl.style.display = open ? ((windowEl.id === 'win-pcgames') ? 'flex' : 'flex') : 'none';
         if (open) {
             cascadePosition(windowEl, index);
             windowEl.dataset.userMoved = 'false';
@@ -77,6 +84,13 @@ function applyDefaultLayout(options = {}) {
     highestZ = windowsList.length + 1;
     renameActiveImagePanes();
 }
+
+document.body.addEventListener('click', (e) => {
+    if (!e.target.closest('.desktop-icon')) {
+        document.querySelectorAll('.desktop-icon').forEach(i => i.classList.remove('selected'));
+    }
+});
+
 function setupWindowLogic(windowEl, isImageWindow = false) {
   const titleBar = windowEl.querySelector('.title-bar');
   const titleText = windowEl.querySelector('.title-bar-text').innerText;
@@ -246,3 +260,6 @@ function renameActiveImagePanes() {
         }
     });
 }
+windowsList.forEach(windowEl => {
+    setupWindowLogic(windowEl, false);
+});

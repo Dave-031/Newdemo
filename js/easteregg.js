@@ -1,3 +1,8 @@
+
+const EGG_IMAGES_PER_TRIGGER = 2;
+let eggAnimationActive = false; // Locked while any triggered images are still on screen
+let eggImagesInFlight = 0;
+
 function pickRandomUniqueUrls(count) {
     const pool = EGG_ROLL_IMAGE_URLS.filter(url => url && url.trim() !== '');
     if (pool.length === 0) return [];

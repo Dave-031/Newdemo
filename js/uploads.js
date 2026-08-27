@@ -1,3 +1,10 @@
+document.querySelectorAll('.upload-tray-btn').forEach(button => {
+    button.addEventListener('click', () => {
+        const matchingInput = document.querySelector(`.theme-bg-input[data-theme="${button.dataset.theme}"]`);
+        if (matchingInput) matchingInput.click();
+    });
+});
+
 document.getElementById('image-uploader').addEventListener('change', function(e) {
     const files = Array.from(e.target.files);
     if (files.length === 0) return;
