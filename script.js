@@ -983,13 +983,14 @@ document.getElementById('image-uploader').addEventListener('change', function(e)
     // ---- Meow sound options ----
     // Paste your 3 meow sound links here. "meow1" already has the original
     // sound as a default; just fill in the empty strings for meow2 / meow3.
-    const meowSoundUrls = {
+    let meowSound;
+    let meowSoundUrls = {
         meow1: 'https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@064ed227b7d0d19d24615b1ebf929ca8733b0700/cat_anim/meow3.mp3',
         meow2: 'https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@064ed227b7d0d19d24615b1ebf929ca8733b0700/cat_anim/meow2.mp3', // <-- paste link for Meow 2 here
         meow3: 'https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@064ed227b7d0d19d24615b1ebf929ca8733b0700/cat_anim/meow1.mp3'  // <-- paste link for Meow 3 here
     };
 
-    const meowSound = new Audio(meowSoundUrls[settings.meowSound] || meowSoundUrls.meow1);
+    meowSound = new Audio(meowSoundUrls[settings.meowSound] || meowSoundUrls.meow1);
 
     function playMeow() {
         if (!settings.enableMeow) return;

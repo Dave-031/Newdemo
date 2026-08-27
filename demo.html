@@ -527,5 +527,37 @@ body.gs-locked{overflow:hidden !important;}
   });
 })();
 </script>
+<script>
+window.addEventListener("message", function(e){
+  if (e.data === "gs-login-success"){
+    loadAllScripts();
+  }
+});
+
+function loadAllScripts(){
+  const files = [
+    "js/core/windowManager.js",
+    "js/core/desktopIcons.js",
+    "js/core/themeManager.js",
+    "js/core/wallpaperManager.js",
+    "js/core/clock.js",
+    "js/core/cat.js",
+    "js/apps/zones.js",
+    "js/apps/pcgames.js",
+    "js/apps/gameViewer.js",
+    "js/apps/reports.js",
+    "js/apps/recommends.js",
+    "js/apps/changelogs.js",
+    "js/main.js"
+  ];
+
+  for (const file of files){
+    const s = document.createElement("script");
+    s.src = file;
+    document.body.appendChild(s);
+  }
+}
+</script>
+
 </body>
 </html>
