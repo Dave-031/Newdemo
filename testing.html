@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base href="https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@main/">
+    <title>Bright Future</title>
+    <link id="theme-stylesheet" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@32af2b5554172ed0694716e07d049b8de7c623f2/themes/7_theme.css">
+    <link rel="icon" type="image/x-icon" href="https://64.media.tumblr.com/338b84acf3491001241d1cadf54a99c1/742a58dac3bc91cf-79/s75x75_c1/db3914648ceb52508cfaadc2b6d0dedcc1bbedd1.gifv">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+<body>
+
+<div id="desktop-icons-container">
+    <div class="desktop-icon" data-target="win-games">
+      <div class="desktop-icon-img icon-games"></div>
+      <div class="desktop-icon-text">Games</div>
+    </div>
+    <div class="desktop-icon" data-target="win-pcgames">
+      <div class="desktop-icon-img icon-pcgames"></div>
+      <div class="desktop-icon-text">PC Games</div>
+    </div>
+    <div class="desktop-icon" data-target="win-settings">
+      <div class="desktop-icon-img icon-settings"></div>
+      <div class="desktop-icon-text">Settings</div>
+    </div>
+    <div class="desktop-icon" data-target="win-reports">
+      <div class="desktop-icon-img icon-reports"></div>
+      <div class="desktop-icon-text">Reports</div>
+    </div>
+    <div class="desktop-icon" data-target="win-recommends">
+      <div class="desktop-icon-img icon-recommend"></div>
+      <div class="desktop-icon-text">Recommend</div>
+    </div>
+    <div class="desktop-icon" data-target="win-changelogs">
+      <div class="desktop-icon-img icon-changelogs"></div>
+      <div class="desktop-icon-text">Changelogs</div>
+    </div>
+  </div>
+<!-- #region the apps logic -->
+  <div class="window glass active" id="win-games">
+    <div class="title-bar">
+      <div class="title-bar-text"><span class="win-icon icon-games"></span>GAMES</div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize" class="btn-minimize"></button>
+        <button aria-label="Maximize" class="btn-maximize"></button>
+        <button aria-label="Close" class="btn-close"></button>
+      </div>
+    </div>
+    <div class="window-body has-space" style="display: flex; flex-direction: column; height: 100%;">
+
+      <!-- Normal View: Tells the user to maximize -->
+      <div class="preview-content" style="text-align: center; padding: 20px 15px;">
+        <h1 style="font-size: 26px; margin: 0 0 12px 0; font-weight: bold; color: #000; letter-spacing: 0.5px;">GAMES</h1>
+        <p style="font-size: 14px; color: #222; margin: 0; line-height: 1.4; font-weight: 500;">Double-click the title bar or click the Maximize button [🗖] at the top right to open this window fully.</p>
+      </div>
+
+      <!-- Maximized View: Game list and search -->
+      <div class="full-content" style="padding: 15px; box-sizing: border-box; flex-direction: column; height: 100%;">
+
+        <h1 style="font-size: 24px; margin: 0 0 12px 0; font-weight: bold; color: #000; text-align: center;">GAMES</h1>
+
+        <div style="margin-bottom: 15px;">
+          <input type="text" id="searchBar" placeholder="Search zones..." oninput="filterZones()" style="width: 100%; box-sizing: border-box; padding: 6px 8px; font-size: 13px; font-family: sans-serif;">
+        </div>
+
+        <div id="container" style="flex-grow: 1; overflow-y: auto; padding-right: 4px;">Loading...</div>
+      </div>
+    </div>
+  </div>
+
+  
+
+<div class="window glass active" id="win-pcgames">
+    <div class="title-bar">
+      <div class="title-bar-text"><span class="win-icon icon-pcgames"></span>PC GAMES</div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize" class="btn-minimize"></button>
+        <button aria-label="Maximize" class="btn-maximize"></button>
+        <button aria-label="Close" class="btn-close"></button>
+      </div>
+    </div>
+<div class="window-body has-space" style="display: flex; flex-direction: column; height: 100%;">
+      
+      <!-- Normal View: Tells the user to maximize -->
+      <div class="preview-content" style="text-align: center; padding: 20px 15px;">
+        <h1 style="font-size: 26px; margin: 0 0 12px 0; font-weight: bold; color: #000; letter-spacing: 0.5px;">PC GAMES</h1>
+        <p style="font-size: 14px; color: #222; margin: 0; line-height: 1.4; font-weight: 500;">Double-click the title bar or click the Maximize button [🗖] at the top right to open this window fully.</p>
+      </div>
+      
+      <!-- Maximized View: Game list and search -->
+      <div class="full-content" style="padding: 15px; box-sizing: border-box; flex-direction: column; height: 100%;">
+        <div style="margin-bottom: 15px;">
+          <input type="text" id="pcgames-search" placeholder="Search PC games..." style="width: 100%; box-sizing: border-box; padding: 6px 8px; font-size: 13px; font-family: sans-serif;">
+        </div>
+
+        <div id="pcgames-list" style="flex-grow: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; align-content: start; padding-right: 4px;">
+
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+
+    <div class="window glass active" id="win-pcgames">
+    <div class="title-bar">
+      <div class="title-bar-text"><span class="win-icon icon-games"></span>PC GAMES</div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize" class="btn-minimize"></button>
+        <button aria-label="Maximize" class="btn-maximize"></button>
+        <button aria-label="Close" class="btn-close"></button>
+      </div>
+    </div>
+    <div class="window-body has-space" style="display: flex; flex-direction: column; height: 100%;">
+
+      <!-- Normal View: Tells the user to maximize -->
+      <div class="preview-content" style="text-align: center; padding: 20px 15px;">
+        <h1 style="font-size: 26px; margin: 0 0 12px 0; font-weight: bold; color: #000; letter-spacing: 0.5px;">PC GAMES</h1>
+        <p style="font-size: 14px; color: #222; margin: 0; line-height: 1.4; font-weight: 500;">Double-click the title bar or click the Maximize button [🗖] at the top right to open this window fully.</p>
+      </div>
+
+      <!-- Maximized View: Game list and search -->
+      <div class="full-content" style="padding: 15px; box-sizing: border-box; flex-direction: column; height: 100%;">
+
+        <h1 style="font-size: 24px; margin: 0 0 12px 0; font-weight: bold; color: #000; text-align: center;">PC GAMES</h1>
+
+        <div style="margin-bottom: 15px;">
+          <input type="text" id="searchBar" placeholder="Search zones..." oninput="filterZones()" style="width: 100%; box-sizing: border-box; padding: 6px 8px; font-size: 13px; font-family: sans-serif;">
+        </div>
+
+        <div id="container" style="flex-grow: 1; overflow-y: auto; padding-right: 4px;">Loading...</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="window glass active" id="win-settings">
+    <div class="title-bar">
+      <div class="title-bar-text"><span class="win-icon icon-settings"></span>SETTINGS</div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize" class="btn-minimize"></button>
+        <button aria-label="Maximize" class="btn-maximize"></button>
+        <button aria-label="Close" class="btn-close"></button>
+      </div>
+    </div>
+    <div class="window-body has-space" style="padding: 12px; box-sizing: border-box;">
+        <div class="preview-content" style="text-align: center; padding: 10px 8px;">
+          <h1 style="font-size: 26px; margin: 0 0 8px 0; font-weight: bold; color: #000; letter-spacing: 0.5px;">SETTINGS</h1>
+          <p style="font-size: 14px; color: #222; margin: 0; line-height: 1.4; font-weight: 500;">Double-click the title bar or click the Maximize button [🗖] at the top right to open this window fully.</p>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 10px;">
+            <label for="quick-theme-select" style="font-size: 16px; font-weight: bold; color: #000;">Quick Settings</label>
+            <label for="quick-theme-select" style="font-size: 12px; font-weight: bold; color: #000;">Theme</label>
+            <select id="quick-theme-select" style="width: 100%; max-width: 180px; padding: 4px; font-size: 12px;">
+              <option value="https://unpkg.com/98.css">Windows 98</option>
+              <option value="https://unpkg.com/xp.css">Windows XP</option>
+              <option value="https://unpkg.com/7.css" selected>Windows 7</option>
+            </select>
+          </div>
+        </div>
+        <div class="full-content" style="padding: 0;">
+          <h1 style="margin-top: 0;">System Configurations</h1>
+          <p style="font-size: 12px; margin-bottom: 10px;">Themes, wallpapers, and behavior all save automatically in your browser.</p>
+          <fieldset style="border: 2px solid #808080; padding: 10px;">
+            <legend>Theme & Wallpaper</legend>
+            <div style="margin-bottom: 6px; font-size: 12px;">Select active theme:</div>
+            <div style="margin-bottom: 4px; font-size: 12px;">
+              <input id="theme-win98" type="radio" name="theme-selection-group" value="https://unpkg.com/98.css">
+              <label for="theme-win98">Windows 98</label>
+            </div>
+            <div style="margin-bottom: 4px; font-size: 12px;">
+              <input id="theme-winxp" type="radio" name="theme-selection-group" value="https://unpkg.com/xp.css">
+              <label for="theme-winxp">Windows XP</label>
+            </div>
+            <div style="margin-bottom: 4px; font-size: 12px;">
+              <input id="theme-win7" type="radio" name="theme-selection-group" value="https://unpkg.com/7.css" checked>
+              <label for="theme-win7">Windows 7</label>
+            </div>
+          </fieldset>
+
+          <fieldset style="border: 2px solid #808080; padding: 10px; margin-top: 10px;">
+            <legend>Custom Backgrounds</legend>
+            <div style="font-size: 12px; margin-bottom: 8px;">Upload a different background image for each theme. These will be saved.</div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <div style="display: flex; flex-direction: column; gap: 4px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+                  <span style="font-size: 12px; font-weight: bold;">Windows 98</span>
+                  <div style="display: flex; gap: 4px;">
+                    <button type="button" class="upload-tray-btn" data-theme="https://unpkg.com/98.css">Upload</button>
+                    <button type="button" class="revert-bg-btn" data-theme="https://unpkg.com/98.css" style="padding: 0 4px; font-size: 11px; background: #c0c0c0; border: 2px solid #808080; color: #000; cursor: pointer;">Revert</button>
+                  </div>
+                </div>
+                <input type="file" accept="image/*" class="theme-bg-input" data-theme="https://unpkg.com/98.css" style="display: none;">
+                <div class="theme-bg-status" data-theme="https://unpkg.com/98.css" style="font-size: 11px; color: #444;">Using default wallpaper</div>
+                <img class="theme-bg-preview" data-theme="https://unpkg.com/98.css" alt="Windows 98 wallpaper preview" style="display: none; width: 100%; max-height: 90px; object-fit: cover; border: 1px solid #808080;">
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 4px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+                  <span style="font-size: 12px; font-weight: bold;">Windows XP</span>
+                  <div style="display: flex; gap: 4px;">
+                    <button type="button" class="upload-tray-btn" data-theme="https://unpkg.com/xp.css">Upload</button>
+                    <button type="button" class="revert-bg-btn" data-theme="https://unpkg.com/xp.css" style="padding: 0 4px; font-size: 11px; background: #c0c0c0; border: 2px solid #808080; color: #000; cursor: pointer;">Revert</button>
+                  </div>
+                </div>
+                <input type="file" accept="image/*" class="theme-bg-input" data-theme="https://unpkg.com/xp.css" style="display: none;">
+                <div class="theme-bg-status" data-theme="https://unpkg.com/xp.css" style="font-size: 11px; color: #444;">Using default wallpaper</div>
+                <img class="theme-bg-preview" data-theme="https://unpkg.com/xp.css" alt="Windows XP wallpaper preview" style="display: none; width: 100%; max-height: 90px; object-fit: cover; border: 1px solid #808080;">
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 4px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+                  <span style="font-size: 12px; font-weight: bold;">Windows 7</span>
+                  <div style="display: flex; gap: 4px;">
+                    <button type="button" class="upload-tray-btn" data-theme="https://unpkg.com/7.css">Upload</button>
+                    <button type="button" class="revert-bg-btn" data-theme="https://unpkg.com/7.css" style="padding: 0 4px; font-size: 11px; background: #c0c0c0; border: 2px solid #808080; color: #000; cursor: pointer;">Revert</button>
+                  </div>
+                </div>
+                <input type="file" accept="image/*" class="theme-bg-input" data-theme="https://unpkg.com/7.css" style="display: none;">
+                <div class="theme-bg-status" data-theme="https://unpkg.com/7.css" style="font-size: 11px; color: #444;">Using default wallpaper</div>
+                <img class="theme-bg-preview" data-theme="https://unpkg.com/7.css" alt="Windows 7 wallpaper preview" style="display: none; width: 100%; max-height: 90px; object-fit: cover; border: 1px solid #808080;">
+              </div>
+            </div>
+          </fieldset>
+
+<fieldset style="border: 2px solid #808080; padding: 10px; margin-top: 10px;">
+            <legend>Behavior</legend>
+            
+            <label for="show-clock-toggle" style="display: flex; align-items: center; justify-content: space-between; font-size: 13px; font-weight: bold; cursor: pointer; flex-wrap: nowrap; gap: 25px;">
+              <span style="display: block;">Show taskbar clock</span>
+              <input id="show-clock-toggle" type="checkbox" checked>
+            </label>
+
+            <label for="show-cat-toggle" style="display: flex; align-items: center; justify-content: space-between; font-size: 13px; font-weight: bold; cursor: pointer; flex-wrap: nowrap; gap: 25px; margin-top: 10px;">
+              <span style="display: block;">Show taskbar cat</span>
+              <input id="show-cat-toggle" type="checkbox" checked>
+            </label>
+
+            <label for="cat-size-slider" style="display: flex; align-items: center; justify-content: space-between; font-size: 13px; font-weight: bold; cursor: pointer; flex-wrap: nowrap; gap: 25px; margin-top: 10px;">
+              <span style="display: block;">Cat size scale</span>
+              <input id="cat-size-slider" type="range" min="0.5" max="2.5" step="0.1" value="1" style="width: 100px; cursor: pointer;">
+            </label>
+
+            <label for="enable-meow-toggle" style="display: flex; align-items: center; justify-content: space-between; font-size: 13px; font-weight: bold; cursor: pointer; flex-wrap: nowrap; gap: 25px; margin-top: 10px;">
+              <span style="display: block;">Enable cat meow</span>
+              <input id="enable-meow-toggle" type="checkbox" checked>
+            </label>
+
+            <label for="meow-sound-select" style="display: flex; align-items: center; justify-content: space-between; font-size: 13px; font-weight: bold; cursor: pointer; flex-wrap: nowrap; gap: 25px; margin-top: 10px;">
+              <span style="display: block;">Meow sound</span>
+              <select id="meow-sound-select" style="cursor: pointer;">
+                <option value="meow1">Meow 1</option>
+                <option value="meow2">Meow 2</option>
+                <option value="meow3">Meow 3</option>
+              </select>
+            </label>
+
+            <label for="cloak-toggle" style="display: flex; align-items: center; justify-content: space-between; font-size: 13px; font-weight: bold; cursor: pointer; flex-wrap: nowrap; gap: 25px; margin-top: 10px;">
+              <span style="display: block;">Enable cloak</span>
+              <input id="cloak-toggle" type="checkbox" checked>
+            </label>
+
+            <label for="ctrlW-toggle" style="display: flex; align-items: center; justify-content: space-between; font-size: 13px; font-weight: bold; cursor: pointer; flex-wrap: nowrap; gap: 25px; margin-top: 10px;">
+              <span style="display: block;">Disable Ctrl+w</span>
+              <input id="ctrlW-toggle" type="checkbox" checked>
+            </label>
+
+                        <label for="cat-theme-select" style="display: flex; align-items: center; justify-content: space-between; font-size: 13px; font-weight: bold; cursor: pointer; flex-wrap: nowrap; gap: 25px; margin-top: 10px;">
+              <span style="display: block;">cat theme</span>
+              <select id="cat-theme-select" style="cursor: pointer;">
+                <option value="cat">cat</option>
+                <option value="meevin">meevin</option>
+              </select>
+            </label>
+
+            <label for="dark-mode-toggle" style="display: flex; align-items: center; justify-content: space-between; font-size: 13px; font-weight: bold; cursor: pointer; flex-wrap: nowrap; gap: 25px; margin-top: 10px;">
+              <span style="display: block;">Dark mode</span>
+              <input id="dark-mode-toggle" type="checkbox">
+            </label>
+
+          </fieldset>
+          <fieldset style="border: 2px solid #808080; padding: 10px; margin-top: 10px;">
+            <legend>Backup & Restore</legend>
+            <div style="font-size: 12px; margin-bottom: 8px;">Export every saved setting (theme, wallpapers, cat, etc.) to a file, or import one you have saved.</div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button type="button" id="export-settings-btn" style="padding: 6px 14px; cursor: pointer; font-size: 12px; font-weight: bold;">Export Settings</button>
+              <button type="button" id="import-settings-btn" style="padding: 6px 14px; cursor: pointer; font-size: 12px; font-weight: bold;">Import Settings</button>
+              <input type="file" id="import-settings-input" accept=".json,application/json" style="display: none;">
+            </div>
+            <div id="backup-status" style="font-size: 11px; color: #444; margin-top: 6px;"></div>
+          </fieldset>
+        </div>
+    </div>
+  </div>
+
+  <div class="window glass active" id="win-reports">
+    <div class="title-bar">
+      <div class="title-bar-text"><span class="win-icon icon-reports"></span>REPORTS</div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize" class="btn-minimize"></button>
+        <button aria-label="Close" class="btn-close"></button>
+      </div>
+    </div>
+    <div class="window-body has-space" style="padding: 16px; box-sizing: border-box; overflow: hidden; position: relative;">
+        <div class="submit-overlay" id="report-submit-overlay">
+          <div class="submit-overlay-box">
+            <div class="submit-overlay-spinner"></div>
+            <div class="submit-overlay-marquee"><div class="submit-overlay-marquee-block"></div></div>
+            <div class="submit-overlay-stripes"><div class="submit-overlay-stripes-fill"></div></div>
+            <div class="submit-overlay-text" id="report-submit-overlay-text">Submitting report&hellip;</div>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 14px;">
+          <fieldset style="border: 2px solid #808080; padding: 16px; margin: 0;">
+            <legend style="font-weight: bold; color: #000; font-size: 15px;">Report a Broken Game</legend>
+            
+            <p style="margin: 0 0 14px 0; color: #111; font-size: 13.5px; line-height: 1.5; font-weight: 500;">
+              If a title fails to load or has execution bugs, submit it below.
+            </p>
+            
+            <div class="field-row" style="margin: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 6px;">
+              <label for="broken-game-name" style="color: #000; font-weight: bold; font-size: 14px;">Game Name:</label>
+              <input id="broken-game-name" type="text" maxlength="20" style="width: 100%; box-sizing: border-box; padding: 6px; font-size: 14px; font-family: sans-serif;" placeholder="e.g. Bowmasters.">
+              <span style="font-size: 11px; color: #444; font-weight: 500; margin-top: 3px;">max 20 characters</span>
+            </div>
+          </fieldset>
+          
+          <div style="display: flex; justify-content: flex-end; align-items: center; gap: 12px;">
+            <span id="report-submit-status" style="font-size: 12px; color: #a00000; font-weight: bold;"></span>
+            <button id="report-submit-btn" style="padding: 8px 24px; cursor: pointer; font-size: 13px; font-weight: bold;">Submit</button>
+          </div>
+        </div>
+    </div>
+  </div>
+
+  <div class="window glass active" id="win-recommends">
+    <div class="title-bar">
+      <div class="title-bar-text"><span class="win-icon icon-recommend"></span>RECOMMEND</div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize" class="btn-minimize"></button>
+        <button aria-label="Close" class="btn-close"></button>
+      </div>
+    </div>
+    <div class="window-body has-space" style="padding: 16px; box-sizing: border-box; overflow: hidden; position: relative;">
+        <div class="submit-overlay" id="recommend-submit-overlay">
+          <div class="submit-overlay-box">
+            <div class="submit-overlay-spinner"></div>
+            <div class="submit-overlay-marquee"><div class="submit-overlay-marquee-block"></div></div>
+            <div class="submit-overlay-stripes"><div class="submit-overlay-stripes-fill"></div></div>
+            <div class="submit-overlay-text" id="recommend-submit-overlay-text">Submitting recommendation&hellip;</div>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 14px;">
+          <fieldset style="border: 2px solid #808080; padding: 16px; margin: 0;">
+            <legend style="font-weight: bold; color: #000; font-size: 15px;">Recommend a Game</legend>
+            
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+              <div class="field-row" style="margin: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
+                <label for="rec-game-name" style="color: #000; font-weight: bold; font-size: 14px;">Game Name:</label>
+                <input id="rec-game-name" type="text" maxlength="20" style="width: 100%; box-sizing: border-box; padding: 6px; font-size: 14px; font-family: sans-serif;" placeholder="e.g. Awesome Tanks 2.">
+                <span style="font-size: 11px; color: #444; font-weight: 500; margin-top: 2px;">max 20 characters</span>
+              </div>
+
+              <div class="field-row" style="margin: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
+                <label for="rec-game-reason" style="color: #000; font-weight: bold; font-size: 14px;">Why do you want this game?</label>
+                <input id="rec-game-reason" type="text" maxlength="80" style="width: 100%; box-sizing: border-box; padding: 6px; font-size: 14px; font-family: sans-serif;">
+                <span style="font-size: 11px; color: #444; font-weight: 500; margin-top: 2px;">max 80 characters</span>
+              </div>
+            </div>
+          </fieldset>
+          
+          <div style="display: flex; justify-content: flex-end; align-items: center; gap: 12px;">
+            <span id="recommend-submit-status" style="font-size: 12px; color: #a00000; font-weight: bold;"></span>
+            <button id="recommend-submit-btn" style="padding: 8px 24px; cursor: pointer; font-size: 13px; font-weight: bold;">Submit</button>
+          </div>
+        </div>
+    </div>
+  </div>
+
+  <div class="window glass active" id="win-changelogs">
+    <div class="title-bar">
+      <div class="title-bar-text"><span class="win-icon icon-changelogs"></span>CHANGELOGS</div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize" class="btn-minimize"></button>
+        <button aria-label="Maximize" class="btn-maximize"></button>
+        <button aria-label="Close" class="btn-close"></button>
+      </div>
+    </div>
+    <div class="window-body has-space" style="padding: 15px; box-sizing: border-box;">
+      <div class="preview-content" style="text-align: center; padding: 5px 15px;">
+        <h1 style="font-size: 26px; margin: 0 0 12px 0; font-weight: bold; color: #000; letter-spacing: 0.5px;">CHANGELOGS</h1>
+        <p style="font-size: 14px; color: #222; margin: 0; line-height: 1.4; font-weight: 500;">Double-click the title bar or click the Maximize button [🗖] at the top right to open this window fully.</p>
+      </div>
+        <div class="full-content" id="changelogs-full-content" style="padding: 5px 0; height: 100%; box-sizing: border-box;">
+          <h1 style="margin: 0 0 10px 0; font-size: 34px; font-weight: bold; letter-spacing: 1px; text-align: center;">CHANGELO<a href="https://script.google.com/macros/s/AKfycbxceAWXPWGSJq2oMXvAP0v_yHXQEk9lBGDhDKueulyQxgJ1ahNan984GwxvE6mt5S-i/exec" target="_blank" style="color: inherit; text-decoration: none; cursor: pointer;">G</a>S</h1>
+          <div style="margin-bottom: 10px;">
+            <input type="text" id="changelog-search" placeholder="Search by version, date, or keyword..." style="width: 100%; box-sizing: border-box; padding: 6px 8px; font-size: 13px; font-family: sans-serif;">
+          </div>
+          <div id="changelog-status" style="font-size: 11px; color: #444; margin-bottom: 8px;">Loading changelogs…</div>
+          <div id="changelog-list" style="flex-grow: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; align-content: start; padding-right: 4px;"></div>
+        </div>
+    </div>
+  </div>
+  <!-- #endregion -->
+  <div id="taskbar">
+      <button id="start-btn"><span class="win-icon icon-start"></span>Start</button>
+      <!-- Re-order Layout button disabled — commented out, not deleted -->
+      <!-- <button id="reorder-btn">Re-order Layout</button> -->
+      <div style="width: 1px; height: 28px; background: #808080; border-right: 1px solid #fff; margin: 0 4px;"></div>
+      <div id="taskbar-items-container" style="display: flex; gap: 4px; flex-grow: 1; height: 28px; align-items: center;"></div>
+      
+      <div class="taskbar-tray">
+          <div id="taskbar-clock">00:00 AM</div>
+          <button class="upload-tray-btn" onclick="document.getElementById('image-uploader').click()">Upload Image</button>
+          <input type="file" id="image-uploader" accept="image/*" multiple style="display: none;">
+      </div>
+
+      <div id="taskbar-cat" title="Drag me around!"></div>
+  </div>
+
+  <div class="window glass active" id="instructions-window" style="left: 480px; top: 140px; z-index: 100000;">
+    <div class="title-bar">
+      <div class="title-bar-text"><span class="win-icon icon-welcome"></span>Welcome</div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize" class="btn-minimize"></button>
+        <button aria-label="Close" class="btn-close"></button>
+      </div>
+    </div>
+    <div class="window-body has-space" style="padding: 14px; box-sizing: border-box;">
+      <p style="margin: 0 0 10px 0;">The desktop starts empty. Here's how to get around:</p>
+      <ul style="margin: 0 0 14px 0; padding-left: 20px;">
+        <li>Double-click an icon on the desktop to open its window.</li>
+        <li>Drag a window by its title bar to move it.</li>
+        <li>Use the taskbar at the bottom to switch between open windows.</li>
+      </ul>
+      <div style="display: flex; justify-content: flex-end;">
+        <button id="instructions-ok-btn" style="padding: 6px 22px; cursor: pointer;">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GAME VIEWER (opens a clicked game in-page, with Fullscreen / Open in
+       New Tab / Close on top) and the YT Playables popup. Markup/behavior
+       match the zone-viewer script exactly; look/feel is themed by
+       styles.css so it matches whichever OS theme (98/xp/7) is active. -->
+  <div id="zoneViewer">
+    <div class="title-bar">
+      <div class="title-bar-text">
+        <span id="zoneName">zone</span>
+        <!-- Hidden ID required for Open in New Tab to work properly -->
+        <span id="zoneId" style="display: none;"></span>
+      </div>
+      <div class="zone-viewer-controls">
+        <button type="button" onclick="fullscreenZone()">Fullscreen</button>
+        <button type="button" onclick="aboutBlank()">Open in New Tab</button>
+        <button type="button" onclick="closeZone()">Close</button>
+      </div>
+    </div>
+    <iframe id="zoneFrame"></iframe>
+  </div>
+
+  <!-- Popup (kept exclusively for YT Playables messages) -->
+  <!-- .window / .window-body: same classes every real window uses, so the
+       active theme.css (98.css/xp.css/7.css) skins this with the real
+       window frame (border/shadow/rounded corners) instead of a flat,
+       unstyled box. It's excluded from the desktop window manager's
+       .window sweep in script.js (see windowsList), so it stays a
+       fixed, centered, non-draggable popup rather than becoming a
+       tracked desktop window. -->
+  <div id="popupOverlay">
+    <div class="popup-box window">
+      <div class="title-bar">
+        <div class="title-bar-text" id="popupTitle">Title</div>
+        <div class="title-bar-controls">
+          <button aria-label="Close" id="popupClose" onclick="closePopup()"></button>
+        </div>
+      </div>
+      <div class="popup-body window-body" id="popupBody">
+        Content will be here
+      </div>
+    </div>
+  </div>
+
+
+<style>
+#login-gate{position:fixed;inset:0;z-index:2147483647;background:#000;}
+#login-gate iframe{width:100%;height:100%;border:0;display:block;}
+body.gs-locked > *:not(#login-gate){visibility:hidden !important;}
+body.gs-locked{overflow:hidden !important;}
+</style>
+<script>
+(function(){
+  function themeFile(){
+    var t = "https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@287aea7abcc16d830fed8c1e835df11cb4daca5a/logins/7.html";
+    try {
+      var raw = localStorage.getItem("windows_gamesite");
+      if (raw) { var p = JSON.parse(raw); if (p && p.selectedTheme) t = p.selectedTheme; }
+    } catch(e){}
+    
+    if (t.indexOf("98") !== -1) return "https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@259f76e7d54f44b8b30263617aca2deeae760ed0/logins/98.html";
+    if (t.indexOf("xp") !== -1) return "https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@0840b621b862022bf7a6b25205b3b394b945ff87/logins/xp.html";
+    return "https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@287aea7abcc16d830fed8c1e835df11cb4daca5a/logins/7.html";
+  }
+
+  document.body.classList.add("gs-locked");
+  var gate = document.createElement("div");
+  gate.id = "login-gate";
+  
+  fetch(themeFile())
+    .then(function(response) {
+      if (!response.ok) throw new Error("Network response was not ok");
+      return response.text();
+    })
+    .then(function(html) {
+      var blob = new Blob([html], { type: 'text/html' });
+      var blobUrl = URL.createObjectURL(blob);
+      
+      var frame = document.createElement("iframe");
+      frame.src = blobUrl;
+      gate.appendChild(frame);
+    })
+    .catch(function(err) {
+      console.error("Failed to load login theme:", err);
+    });
+
+  document.body.appendChild(gate);
+
+  window.addEventListener("message", function(e){
+    if (e.data === "gs-login-success"){
+      document.body.classList.remove("gs-locked");
+      gate.remove();
+    }
+  });
+})();
+
+</script>
+<script>
+window.addEventListener("message", function(e){
+  if (e.data === "gs-login-success"){
+    loadAllScripts();
+  }
+});
+
+function loadAllScripts(){
+  const files = [
+    "js/core/windowManager.js",
+    "js/core/desktopIcons.js",
+    "js/core/themeManager.js",
+    "js/core/wallpaperManager.js",
+    "js/core/clock.js",
+    "js/core/cat.js",
+    "js/apps/zones.js",
+    "js/apps/pcgames.js",
+    "js/apps/gameViewer.js",
+    "js/apps/reports.js",
+    "js/apps/recommends.js",
+    "js/apps/changelogs.js",
+    "js/main.js"
+  ];
+
+  for (const file of files){
+    const s = document.createElement("script");
+    s.src = file;
+    document.body.appendChild(s);
+  }
+}
+</script>
+
+</body>
+</html>
