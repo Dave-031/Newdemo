@@ -1,0 +1,508 @@
+Absolutely. Based on the JS you posted, here's exactly where every major function belongs.
+
+# config.js
+
+Only constants and global configuration.
+
+```js
+const HTML_URL
+const COVER_URL
+
+const GAMES_IGNORE_LIST
+const PCGAMES_IGNORE_LIST
+
+const wallpapers
+
+const STORAGE_KEY
+
+const defaultSettings
+
+const CASCADE_BASE_LEFT
+const CASCADE_BASE_TOP
+const CASCADE_STEP
+const TASKBAR_HEIGHT
+
+const EGG_ROLL_IMAGE_URLS
+const EGG_IMAGES_PER_TRIGGER
+```
+
+Variables:
+
+```js
+let settings
+let highestZ
+```
+
+---
+
+# settings.js
+
+Settings loading/saving only.
+
+```js
+loadSettings()
+
+saveSettings()
+
+updateCtrlW()
+
+updateCloakVis()
+```
+
+Anything touching:
+
+```js
+localStorage
+```
+
+belongs here.
+
+---
+
+# theme.js
+
+Theme handling.
+
+```js
+getBackgroundForTheme()
+
+updateBackgroundStatus()
+
+applyTheme()
+
+updateDarkMode()
+```
+
+---
+
+# windows.js
+
+Window manager.
+
+```js
+getIconClass()
+
+cascadePosition()
+
+applyDefaultLayout()
+
+setupWindowLogic()
+
+renameActiveImagePanes()
+```
+
+Maps:
+
+```js
+standardWindowMap
+
+imageWindowMap
+```
+
+belong here too.
+
+---
+
+# desktop.js
+
+Desktop icon selection and dragging.
+
+Move ALL of this:
+
+```js
+document.querySelectorAll('.desktop-icon')
+```
+
+logic
+
+Selection:
+
+```js
+click
+dblclick
+selected class
+```
+
+Dragging:
+
+```js
+draggedIcon
+dragOffsetX
+dragOffsetY
+
+isSlotOccupied()
+```
+
+Snap-to-grid:
+
+```js
+mouseup
+mousemove
+```
+
+belongs here.
+
+---
+
+# clock.js
+
+Only clock stuff.
+
+```js
+updateClock()
+
+updateClockVisibility()
+```
+
+and:
+
+```js
+setInterval(updateClock,1000);
+```
+
+---
+
+# cat.js
+
+Everything cat.
+
+```js
+ChangeCatTheme()
+
+updateCatSettings()
+```
+
+Entire block:
+
+```js
+(function setupTaskbarCat()
+```
+
+All audio:
+
+```js
+meowSoundUrls
+
+playMeow()
+
+clampCatLeft()
+```
+
+belongs here.
+
+---
+
+# uploads.js
+
+Image pane system.
+
+```js
+document.getElementById('image-uploader')
+```
+
+handler.
+
+Everything involving:
+
+```js
+win-uploaded-
+
+uploaded-img-frame
+
+setupWindowLogic(newWindow,true)
+```
+
+belongs here.
+
+---
+
+# backups.js
+
+Export/import settings.
+
+```js
+exportSettingsBtn
+
+importSettingsBtn
+
+importSettingsInput
+```
+
+and all:
+
+```js
+Export Settings
+Import Settings
+```
+
+code.
+
+---
+
+# easteregg.js
+
+Everything related to Start button easter egg.
+
+```js
+pickRandomUniqueUrls()
+
+spawnSingleEggImage()
+
+spawnEggRollImage()
+```
+
+and:
+
+```js
+(function()
+{
+   startBtn
+}
+)();
+```
+
+---
+
+# games.js
+
+PC games.
+
+```js
+openGameInNewWindow()
+
+setupGameGrid()
+```
+
+PC game loading:
+
+```js
+pcGames.json
+```
+
+belongs here.
+
+---
+
+# zoneViewer.js
+
+Everything here:
+
+```js
+listZones()
+
+displayZones()
+
+filterZones()
+
+zoneURL()
+
+zoneBaseFor()
+
+injectZoneBase()
+
+openZone()
+
+aboutBlank()
+
+closeZone()
+
+fullscreenZone()
+
+closePopup()
+```
+
+Variables:
+
+```js
+container
+zoneViewer
+zoneFrame
+searchBar
+zonesURL
+testingURL
+coverURL
+htmlURL
+zones
+```
+
+also belong here.
+
+---
+
+# changelogs.js
+
+Entire section:
+
+```js
+(function setupChangelogs()
+```
+
+Functions:
+
+```js
+renderChangelogs()
+
+loadChangelogs()
+```
+
+---
+
+# reports.js
+
+Everything inside:
+
+```js
+(function ()
+{
+   GAS_API_BASE
+}
+)();
+```
+
+Functions:
+
+```js
+buildSubmitUrl()
+
+showStatus()
+
+showOverlay()
+
+hideOverlay()
+
+startCooldown()
+
+submitToGAS()
+```
+
+Report button:
+
+```js
+report-submit-btn
+```
+
+Recommend button:
+
+```js
+recommend-submit-btn
+```
+
+---
+
+# login.js
+
+The page lock.
+
+Move ALL of this:
+
+```js
+#login-gate styles
+
+(function(){
+
+    themeFile()
+
+    fetch(themeFile())
+
+    window.addEventListener("message")
+
+})();
+```
+
+here.
+
+Also create:
+
+```js
+function unlockSite() {
+    document.body.classList.remove("gs-locked");
+    gate.remove();
+
+    bootApplication();
+}
+```
+
+---
+
+# app.js
+
+Startup ONLY.
+
+Create:
+
+```js
+function bootApplication()
+{
+    updateBackgroundStatus();
+
+    updateClockVisibility();
+
+    applyTheme(settings.selectedTheme);
+
+    updateCatSettings();
+
+    updateCloakVis();
+
+    updateDarkMode();
+
+    updateClock();
+
+    listZones();
+}
+```
+
+Then replace:
+
+```js
+try {
+    listZones();
+    updateBackgroundStatus();
+    updateClockVisibility();
+    applyTheme(settings.selectedTheme);
+    updateCatSettings();
+    updateCloakVis();
+    updateDarkMode();
+}
+```
+
+with:
+
+```js
+// do nothing on page load
+```
+
+and call:
+
+```js
+bootApplication();
+```
+
+ONLY after:
+
+```js
+gs-login-success
+```
+
+is received.
+
+# One more thing
+
+Your `setupWindowLogic()` function is almost 250 lines long. I would split it further:
+
+```js
+setupWindowLogic()
+
+createTaskbarButton()
+
+bringToFront()
+
+toggleMaximize()
+
+setupDragging()
+
+setupMinimize()
+
+setupClose()
+```
+
+That single change alone will make the whole project dramatically easier to maintain.
