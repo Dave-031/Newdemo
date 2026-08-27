@@ -168,7 +168,7 @@ function updateCtrlW() {
 }
 
 // toggles the cloaking feature
-function updateCloakVis() {
+function updateCloak() {
     if (settings.cloak) {
         let link = document.querySelector("link[rel*='icon']");
         link.href = 'https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@da8f66de45396943270ef98ced3b3916eccf76d9/images/cloak.png';
@@ -332,7 +332,7 @@ if (cloak) {
     cloak.checked = settings.cloak;
     cloak.addEventListener('change', (e) => {
         settings.cloak = e.target.checked;
-        updateCloakVis();
+        updateCloak();
         saveSettings();
     })
 }
@@ -1858,7 +1858,7 @@ try {
     updateClockVisibility();
     applyTheme(settings.selectedTheme);
     updateCatSettings();
-    updateCloakVis();
+    updateCloak();
     updateDarkMode();
 } catch (err) {
     console.error('Init error:', err); }
