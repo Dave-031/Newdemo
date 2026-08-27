@@ -38,9 +38,8 @@
     if (e.data === "gs-login-success"){
       document.body.classList.remove("gs-locked");
       gate.remove();
+
+      bootApplication();
     }
   });
 })();
-funciton unlockSite() {
-    document.body.classList
-}

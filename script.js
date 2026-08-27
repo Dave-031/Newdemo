@@ -1852,13 +1852,4 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 }
 
 
-try {
-    listZones();
-    updateBackgroundStatus();
-    updateClockVisibility();
-    applyTheme(settings.selectedTheme);
-    updateCatSettings();
-    updateCloak();
-    updateDarkMode();
-} catch (err) {
-    console.error('Init error:', err); }
+//do nothing on page load
