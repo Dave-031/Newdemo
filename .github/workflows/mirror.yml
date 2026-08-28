@@ -3,7 +3,7 @@ name: Push Mirror to GitLab
 on:
   push:
     branches:
-      - main
+      - main  # Change this to master if that is your primary branch
 
 jobs:
   mirror:
@@ -17,6 +17,6 @@ jobs:
       - name: Mirror to GitLab
         uses: pixta-dev/repository-mirroring-action@v1
         with:
-          target_repo_url: "https://gitlab.com"
-          auth_username: "oauth2"  # Change this to oauth2
-          auth_password: ${{ secrets.GITLAB}}
+          # Notice we are using ssh:// format now
+          target_repo_url: "ssh://git@://gitlab.com"
+          ssh_private_key: ${{ secrets.GITLAB_SSH_PRIVATE_KEY }}
