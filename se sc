@@ -7,9 +7,8 @@ Only constants and global configuration.
 ```js
 const HTML_URL
 const COVER_URL
-
 const GAMES_IGNORE_LIST
-const PCGAMES_IGNORE_LIST
+const PCGAMES_IGNORE_LISTadfg
 
 const wallpapers
 
