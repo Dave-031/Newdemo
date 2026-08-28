@@ -1,0 +1,22 @@
+name: Push Mirror to GitLab
+
+on:
+  push:
+    branches:
+      - main  # Adjust this if your default branch is master or something else
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Necessary to fetch all history and branches for mirroring
+
+      - name: Mirror to GitLab
+        uses: pixta-dev/repository-mirroring-action@v1
+        with:
+          target_repo_url: "https://gitlab.com/FunnySquib/Newdemo"
+          auth_username: "git"  # Use 'git' or your GitLab username
+          auth_password: ${{ secrets.GITLAB }}
