@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <!--<base href="https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@main/">-->
+  <base href="https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@main/">
     <title>Bright Future</title>
     <link id="theme-stylesheet" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@32af2b5554172ed0694716e07d049b8de7c623f2/themes/7_theme.css">
     <link rel="icon" type="image/x-icon" href="https://64.media.tumblr.com/338b84acf3491001241d1cadf54a99c1/742a58dac3bc91cf-79/s75x75_c1/db3914648ceb52508cfaadc2b6d0dedcc1bbedd1.gifv">
@@ -494,43 +494,46 @@ body.gs-locked{overflow:hidden !important;}
   });
 })();
 
-</script>
-<script>
 window.addEventListener("message", function(e){
   if (e.data === "gs-login-success"){
-    loadAllScripts();
+    loadScriptsInOrder([
+      "/js/config.js",
+      "/js/settings.js",
+      "/js/theme.js",
+      "/js/windows.js",
+      "/js/cat.js",
+      "/js/clock.js",
+      "/js/desktop.js",
+      "/js/easteregg.js",
+      "/js/uploads.js",
+      "/js/welcome.js",
+      "/js/backups.js",
+      "/js/reports.js",
+      "/js/changelogs.js",
+      "/js/zoneViewer.js",
+      "/js/pcGames.js",
+      "/js/main.js",
+      "/js/app.js",
+      "/js/idk.js"
+    ]);
   }
 });
-const base = "https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@main"
-function loadAllScripts(){
-  const files = [
-    "/js/config.js",
-    "/js/settings.js",
-    "/js/theme.js",
-    "/js/windows.js",
-    "/js/cat.js",
-    "/js/clock.js",
-    "/js/desktop.js",
-    "/js/easteregg.js",
-    "/js/uploads.js",
-    "/js/welcome.js",
-    "/js/backups.js",
-    "/js/reports.js",
-    "/js/changelogs.js",
-    "/js/zoneViewer.js",
-    "/js/pcGames.js",
-    "/js/main.js",
-    "/js/app.js",
-    //"/js/login.js",
-    "/js/idk.js"
-  ];
 
-  for (const file of files){
+const base = "https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@main";
+
+function loadScriptsInOrder(files){
+  function loadNext(i){
+    if (i >= files.length) return;
+
     const s = document.createElement("script");
-    s.src = `${file}`
+    s.src = base + files[i];
+    s.onload = () => loadNext(i + 1);
     document.body.appendChild(s);
   }
+
+  loadNext(0);
 }
+
 </script>
 
 </body>

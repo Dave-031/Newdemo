@@ -263,3 +263,11 @@ function renameActiveImagePanes() {
 windowsList.forEach(windowEl => {
     setupWindowLogic(windowEl, false);
 });
+
+function registerWelcomeWindow() {
+    const dialog = document.getElementById('instructions-window');
+    if (!dialog) return;
+
+    const taskBtn = setupWindowLogic(dialog, false);
+    taskbarContainer.appendChild(taskBtn);
+}
