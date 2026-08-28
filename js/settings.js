@@ -77,6 +77,34 @@ function ChangeCatTheme(theme) {
     
 }
 
+function getBackgroundForTheme(themeValue) {
+    const custom = settings.customBackgrounds[themeValue];
+    if (custom) return custom;
+    return wallpapers[themeValue] || '';
+}
+// sets the custom wallpaper
+function updateBackgroundStatus() {
+    document.querySelectorAll('.theme-bg-status').forEach(statusEl => {
+        const themeValue = statusEl.dataset.theme;
+        if (settings.customBackgrounds[themeValue]) {
+            statusEl.innerText = 'Custom image saved';
+        } else {
+            statusEl.innerText = 'Using default wallpaper';
+        }
+    });
+
+    document.querySelectorAll('.theme-bg-preview').forEach(previewEl => {
+        const themeValue = previewEl.dataset.theme;
+        const custom = settings.customBackgrounds[themeValue];
+        if (custom) {
+            previewEl.src = custom;
+            previewEl.style.display = 'block';
+        } else {
+            previewEl.style.display = 'none';
+        }
+    });
+}
+
 function updateCatSettings() {
     const catEl = document.getElementById('taskbar-cat');
     if (catEl) {

@@ -51,7 +51,7 @@ function applyDefaultLayout(options = {}) {
 
     windowsList.forEach((windowEl, index) => {
         windowEl.classList.remove('maximized');
-        windowEl.style.display = open ? ((windowEl.id === 'win-pcgames') ? 'flex' : 'flex') : 'none';
+        windowEl.style.display = open ? ((windowEl.id === 'win-pcgames') ? 'all' : 'flex') : 'none';
         if (open) {
             cascadePosition(windowEl, index);
             windowEl.dataset.userMoved = 'false';

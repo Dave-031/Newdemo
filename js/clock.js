@@ -11,10 +11,3 @@ function updateClock() {
 }
 updateClock();
 setInterval(updateClock, 1000);
-
-function updateClockVisibility() {
-    const clockElement = document.getElementById('taskbar-clock');
-    if (clockElement) {
-        clockElement.style.display = settings.showClock ? 'flex' : 'none';
-    }
-}

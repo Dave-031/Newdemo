@@ -8,7 +8,7 @@ function bootApplication()
 
     updateCatSettings();
 
-    updateCloakVis();
+    updateCloak();
 
     updateDarkMode();
 
