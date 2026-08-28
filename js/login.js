@@ -1,5 +1,20 @@
-window.addEventListener("message", function(e){
+(function (){
     if (e.data === "gs-login-success"){
-      bootApplication();
-    }
-  });
+      updateBackgroundStatus();
+
+     updateClockVisibility();
+
+     applyTheme(settings.selectedTheme);
+
+     updateCatSettings();
+
+     updateCloak();
+
+    updateDarkMode();
+
+     updateClock();
+
+     listZones();
+    console.log("login success message received");
+    }});
+    

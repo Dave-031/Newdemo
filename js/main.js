@@ -9,4 +9,13 @@ function initDesktop() {
     // etc...
 }
 
+updateBackgroundStatus();
+updateClockVisibility();
+applyTheme(settings.selectedTheme);
+updateCatSettings();
+updateCloak();
+updateDarkMode();
+updateClock();
+listZones();
+console.log("login success message received");
 initDesktop();

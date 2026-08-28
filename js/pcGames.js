@@ -191,7 +191,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // PC GAMES: single JSON source, same format as zones.json below.
     // Replace '1.json' with your actual JSON endpoint/file path for PC GAMES.
     // Clicking a card navigates the current tab to game.link (default openMode).
-    setupGameGrid('pcGames.json', 'pcgames-list', 'pcgames-search', PCGAMES_IGNORE_LIST);
+    setupGameGrid('https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@61871cd81ef62f9240929d24fbdde7c5bc48a16c/pcGames.json', 'pcgames-list', 'pcgames-search', PCGAMES_IGNORE_LIST);
 
     // GAMES window: now driven entirely by the zone-viewer script at the
     // bottom of this file (search '#searchBar' / '#container' section below).
