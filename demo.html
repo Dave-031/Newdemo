@@ -67,42 +67,9 @@
     </div>
   </div>
 
-  
-
-<div class="window glass active" id="win-pcgames">
-    <div class="title-bar">
-      <div class="title-bar-text"><span class="win-icon icon-pcgames"></span>PC GAMES</div>
-      <div class="title-bar-controls">
-        <button aria-label="Minimize" class="btn-minimize"></button>
-        <button aria-label="Maximize" class="btn-maximize"></button>
-        <button aria-label="Close" class="btn-close"></button>
-      </div>
-    </div>
-<div class="window-body has-space" style="display: flex; flex-direction: column; height: 100%;">
-      
-      <!-- Normal View: Tells the user to maximize -->
-      <div class="preview-content" style="text-align: center; padding: 20px 15px;">
-        <h1 style="font-size: 26px; margin: 0 0 12px 0; font-weight: bold; color: #000; letter-spacing: 0.5px;">PC GAMES</h1>
-        <p style="font-size: 14px; color: #222; margin: 0; line-height: 1.4; font-weight: 500;">Double-click the title bar or click the Maximize button [🗖] at the top right to open this window fully.</p>
-      </div>
-      
-      <!-- Maximized View: Game list and search -->
-      <div class="full-content" style="padding: 15px; box-sizing: border-box; flex-direction: column; height: 100%;">
-        <div style="margin-bottom: 15px;">
-          <input type="text" id="pcgames-search" placeholder="Search PC games..." style="width: 100%; box-sizing: border-box; padding: 6px 8px; font-size: 13px; font-family: sans-serif;">
-        </div>
-
-        <div id="pcgames-list" style="flex-grow: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; align-content: start; padding-right: 4px;">
-
-        </div>
-      </div>
-    </div>
-    </div>
-  </div>
-
     <div class="window glass active" id="win-pcgames">
     <div class="title-bar">
-      <div class="title-bar-text"><span class="win-icon icon-games"></span>PC GAMES</div>
+      <div class="title-bar-text"><span class="win-icon icon-pcgames"></span>PC GAMES</div>
       <div class="title-bar-controls">
         <button aria-label="Minimize" class="btn-minimize"></button>
         <button aria-label="Maximize" class="btn-maximize"></button>
@@ -475,7 +442,6 @@
     </div>
   </div>
 
-<script src="script.js"></script>
 
 <style>
 #login-gate{position:fixed;inset:0;z-index:2147483647;background:#000;}
@@ -528,37 +494,46 @@ body.gs-locked{overflow:hidden !important;}
   });
 })();
 
-</script>
-<script>
 window.addEventListener("message", function(e){
   if (e.data === "gs-login-success"){
-    loadAllScripts();
+    loadScriptsInOrder([
+      "/js/config.js",
+      "/js/settings.js",
+      "/js/theme.js",
+      "/js/windows.js",
+      "/js/cat.js",
+      "/js/clock.js",
+      "/js/desktop.js",
+      "/js/easteregg.js",
+      "/js/uploads.js",
+      "/js/welcome.js",
+      "/js/backups.js",
+      "/js/reports.js",
+      "/js/changelogs.js",
+      "/js/zoneViewer.js",
+      "/js/pcGames.js",
+      "/js/main.js",
+      "/js/idk.js",
+      "/js/login.js"
+    ]);
   }
 });
 
-function loadAllScripts(){
-  const files = [
-    "js/core/windowManager.js",
-    "js/core/desktopIcons.js",
-    "js/core/themeManager.js",
-    "js/core/wallpaperManager.js",
-    "js/core/clock.js",
-    "js/core/cat.js",
-    "js/apps/zones.js",
-    "js/apps/pcgames.js",
-    "js/apps/gameViewer.js",
-    "js/apps/reports.js",
-    "js/apps/recommends.js",
-    "js/apps/changelogs.js",
-    "js/main.js"
-  ];
+const base = "https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@main";
 
-  for (const file of files){
+function loadScriptsInOrder(files){
+  function loadNext(i){
+    if (i >= files.length) return;
+
     const s = document.createElement("script");
-    s.src = file;
+    s.src = base + files[i];
+    s.onload = () => loadNext(i + 1);
     document.body.appendChild(s);
   }
+
+  loadNext(0);
 }
+
 </script>
 
 </body>

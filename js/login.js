@@ -15,6 +15,8 @@
      updateClock();
 
      listZones();
+
+    ChangeCatTheme();
     console.log("login success message received");
     }});
     

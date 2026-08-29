@@ -1,6 +1,9 @@
 //These are the settings fucntions
 //default to base settings if not already assigned
-
+const catThemes = {
+    cat: "url('/cat_anim/Idle.png')",
+    meevin: "url('/cat_anim/meevin.png')"
+};
 const STORAGE_KEY = 'brightFuture';
 const defaultSettings = {
     selectedTheme: 'https://unpkg.com/7.css',
@@ -74,7 +77,15 @@ function updateClockVisibility() {
 }
 
 function ChangeCatTheme(theme) {
-    
+    const catThemeURL = catThemes[theme]
+    const catElement = document.getElementById("taskbar-cat");
+    if (catThemeURL){
+        catElement.style.backgroundImage = catThemeURL;
+    } else {
+        console.error("no cat theme found or the element id is wrongx");
+        console.error(theme)
+        
+    }
 }
 
 function getBackgroundForTheme(themeValue) {
@@ -144,7 +155,10 @@ function applyTheme(themeValue) {
     saveSettings();
 }
 // #region settings check box logic
+
 let settings = loadSettings();
+
+
 settings.showCat = true; // Taskbar cat is locked visible for now — reserved for a future feature
 // theme selecter
 document.querySelectorAll('input[name="theme-selection-group"]').forEach(radio => {
@@ -264,5 +278,5 @@ const catThemeSelect = document.getElementById('cat-theme-select');
             ChangeCatTheme(settings.catTheme);
             saveSettings();
         })
-    }
+    };
 // #endregion 

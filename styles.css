@@ -369,7 +369,7 @@ div[id^="win-uploaded-"] .window-body {
     left: 180px;
     width: 64px;
     height: 64px; /* MATCHES the sprite height perfectly so there's no invisible empty space */
-    background-image: url('https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@e8dbdb9f643ee6364a3794bdd829baf72cdaaad5/cat_anim/Idle.png');
+    background-image: url('');
     background-repeat: no-repeat;
     background-size: 640px 64px;
     image-rendering: pixelated;

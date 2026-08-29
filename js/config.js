@@ -1,5 +1,8 @@
 //this is all the loose vars in the js 
 //these are for the stolen .json games
+
+
+
 const HTML_URL = "https://cdn.jsdelivr.net/gh/freebuisness/html@main/"; // set this to the real base URL
 const COVER_URL = "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/"; // same idea for {COVER_URL}
 // Removed games These just remove a games based on the name
