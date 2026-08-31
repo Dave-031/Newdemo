@@ -1,8 +1,8 @@
 //These are the settings fucntions
 //default to base settings if not already assigned
 const catThemes = {
-    cat: "url('/cat_anim/Idle.png')",
-    meevin: "url('/cat_anim/meevin.png')"
+    cat: "url('https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@main/cat_anim/Idle.png')",
+    meevin: "url('https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@main/cat_anim/meevin.png')"
 };
 const STORAGE_KEY = 'brightFuture';
 const defaultSettings = {
