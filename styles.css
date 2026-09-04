@@ -716,6 +716,7 @@ div[id^="win-uploaded-"] .window-body {
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     gap: 12px;
     align-content: start;
+    justify-items: end;
 }
 
 .zone-item {
