@@ -14,6 +14,6 @@
             saveSettings();
         });
     } else {
-        closeBtn.click();
+        taskBtn.remove();
     }
 })();
