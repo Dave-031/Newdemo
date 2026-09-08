@@ -1,11 +1,15 @@
 (function () {
+    if (!settings.showWlc) return;
+
     const dialog = document.getElementById('instructions-window');
     if (!dialog) return;
 
     const okBtn = document.getElementById('instructions-ok-btn');
     const closeBtn = dialog.querySelector('.btn-close');
+    if (!okBtn || !closeBtn) return;
 
-    if (okBtn && closeBtn) {
-        okBtn.addEventListener('click', () => closeBtn.click());
-    }
+    okBtn.addEventListener('click', () => {
+        settings.showWlc = false;
+        closeBtn.click();
+    });
 })();

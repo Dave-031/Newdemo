@@ -16,7 +16,8 @@ const defaultSettings = {
     cloak: false,
     ctrlW: false,
     catTheme: 'cat',
-    darkMode: false
+    darkMode: false,
+    showWlc: true
 };
 
 function loadSettings() {
@@ -35,7 +36,8 @@ function loadSettings() {
             cloak: parsed.cloak !== undefined ? parsed.cloak : defaultSettings.cloak,
             ctrlW: parsed.ctrlW !== undefined ? parsed.ctrlW : defaultSettings.ctrlW,
             catTheme: parsed.catTheme || defaultSettings.catTheme,
-            darkMode: parsed.darkMode !== undefined ? parsed.darkMode : defaultSettings.darkMode
+            darkMode: parsed.darkMode !== undefined ? parsed.darkMode : defaultSettings.darkMode,
+            showWlc: parsed.showWlc !== undefined ? parsed.showWlc : defaultSettings.showWlc
         };
     } catch (err) {
         return { ...defaultSettings, customBackgrounds: {} };
