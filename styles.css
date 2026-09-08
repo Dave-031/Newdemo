@@ -486,6 +486,7 @@ div[id^="win-uploaded-"] .window-body {
    bit bigger and the text a bit more readable than the app's default. */
 #instructions-window {
     width: 420px !important;
+    display: none;
 }
 
 #instructions-window .window-body {
