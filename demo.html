@@ -115,9 +115,9 @@
             <label for="quick-theme-select" style="font-size: 16px; font-weight: bold; color: #000;">Quick Settings</label>
             <label for="quick-theme-select" style="font-size: 12px; font-weight: bold; color: #000;">Theme</label>
             <select id="quick-theme-select" style="width: 100%; max-width: 180px; padding: 4px; font-size: 12px;">
-              <option value="https://unpkg.com/98.css">Windows 98</option>
-              <option value="https://unpkg.com/xp.css">Windows XP</option>
-              <option value="https://unpkg.com/7.css" selected>Windows 7</option>
+              <option value="/themes/98.css">Windows 98</option>
+              <option value="/themes/xp.css">Windows XP</option>
+              <option value="/themes/7.css" selected>Windows 7</option>
             </select>
           </div>
         </div>
@@ -128,15 +128,15 @@
             <legend>Theme & Wallpaper</legend>
             <div style="margin-bottom: 6px; font-size: 12px;">Select active theme:</div>
             <div style="margin-bottom: 4px; font-size: 12px;">
-              <input id="theme-win98" type="radio" name="theme-selection-group" value="https://unpkg.com/98.css">
+              <input id="theme-win98" type="radio" name="theme-selection-group" value="/themes/98.css">
               <label for="theme-win98">Windows 98</label>
             </div>
             <div style="margin-bottom: 4px; font-size: 12px;">
-              <input id="theme-winxp" type="radio" name="theme-selection-group" value="https://unpkg.com/xp.css">
+              <input id="theme-winxp" type="radio" name="theme-selection-group" value="/themes/xp.css">
               <label for="theme-winxp">Windows XP</label>
             </div>
             <div style="margin-bottom: 4px; font-size: 12px;">
-              <input id="theme-win7" type="radio" name="theme-selection-group" value="https://unpkg.com/7.css" checked>
+              <input id="theme-win7" type="radio" name="theme-selection-group" value="/themes/7.css" checked>
               <label for="theme-win7">Windows 7</label>
             </div>
           </fieldset>
@@ -149,37 +149,37 @@
                 <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
                   <span style="font-size: 12px; font-weight: bold;">Windows 98</span>
                   <div style="display: flex; gap: 4px;">
-                    <button type="button" class="upload-tray-btn" data-theme="https://unpkg.com/98.css">Upload</button>
-                    <button type="button" class="revert-bg-btn" data-theme="https://unpkg.com/98.css" style="padding: 0 4px; font-size: 11px; background: #c0c0c0; border: 2px solid #808080; color: #000; cursor: pointer;">Revert</button>
+                    <button type="button" class="upload-tray-btn" data-theme="/themes/98.css">Upload</button>
+                    <button type="button" class="revert-bg-btn" data-theme="/themes/98.css" style="padding: 0 4px; font-size: 11px; background: #c0c0c0; border: 2px solid #808080; color: #000; cursor: pointer;">Revert</button>
                   </div>
                 </div>
-                <input type="file" accept="image/*" class="theme-bg-input" data-theme="https://unpkg.com/98.css" style="display: none;">
-                <div class="theme-bg-status" data-theme="https://unpkg.com/98.css" style="font-size: 11px; color: #444;">Using default wallpaper</div>
-                <img class="theme-bg-preview" data-theme="https://unpkg.com/98.css" alt="Windows 98 wallpaper preview" style="display: none; width: 100%; max-height: 90px; object-fit: cover; border: 1px solid #808080;">
+                <input type="file" accept="image/*" class="theme-bg-input" data-theme="/themes/98.css" style="display: none;">
+                <div class="theme-bg-status" data-theme="/themes/98.css" style="font-size: 11px; color: #444;">Using default wallpaper</div>
+                <img class="theme-bg-preview" data-theme="/themes/98.css" alt="Windows 98 wallpaper preview" style="display: none; width: 100%; max-height: 90px; object-fit: cover; border: 1px solid #808080;">
               </div>
               <div style="display: flex; flex-direction: column; gap: 4px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
                   <span style="font-size: 12px; font-weight: bold;">Windows XP</span>
                   <div style="display: flex; gap: 4px;">
-                    <button type="button" class="upload-tray-btn" data-theme="https://unpkg.com/xp.css">Upload</button>
-                    <button type="button" class="revert-bg-btn" data-theme="https://unpkg.com/xp.css" style="padding: 0 4px; font-size: 11px; background: #c0c0c0; border: 2px solid #808080; color: #000; cursor: pointer;">Revert</button>
+                    <button type="button" class="upload-tray-btn" data-theme="/themes/xp.css">Upload</button>
+                    <button type="button" class="revert-bg-btn" data-theme="/themes/xp.css" style="padding: 0 4px; font-size: 11px; background: #c0c0c0; border: 2px solid #808080; color: #000; cursor: pointer;">Revert</button>
                   </div>
                 </div>
-                <input type="file" accept="image/*" class="theme-bg-input" data-theme="https://unpkg.com/xp.css" style="display: none;">
-                <div class="theme-bg-status" data-theme="https://unpkg.com/xp.css" style="font-size: 11px; color: #444;">Using default wallpaper</div>
-                <img class="theme-bg-preview" data-theme="https://unpkg.com/xp.css" alt="Windows XP wallpaper preview" style="display: none; width: 100%; max-height: 90px; object-fit: cover; border: 1px solid #808080;">
+                <input type="file" accept="image/*" class="theme-bg-input" data-theme="/themes/xp.css" style="display: none;">
+                <div class="theme-bg-status" data-theme="/themes/xp.css" style="font-size: 11px; color: #444;">Using default wallpaper</div>
+                <img class="theme-bg-preview" data-theme="/themes/xp.css" alt="Windows XP wallpaper preview" style="display: none; width: 100%; max-height: 90px; object-fit: cover; border: 1px solid #808080;">
               </div>
               <div style="display: flex; flex-direction: column; gap: 4px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
                   <span style="font-size: 12px; font-weight: bold;">Windows 7</span>
                   <div style="display: flex; gap: 4px;">
-                    <button type="button" class="upload-tray-btn" data-theme="https://unpkg.com/7.css">Upload</button>
-                    <button type="button" class="revert-bg-btn" data-theme="https://unpkg.com/7.css" style="padding: 0 4px; font-size: 11px; background: #c0c0c0; border: 2px solid #808080; color: #000; cursor: pointer;">Revert</button>
+                    <button type="button" class="upload-tray-btn" data-theme="/themes/7.css">Upload</button>
+                    <button type="button" class="revert-bg-btn" data-theme="/themes/7.css" style="padding: 0 4px; font-size: 11px; background: #c0c0c0; border: 2px solid #808080; color: #000; cursor: pointer;">Revert</button>
                   </div>
                 </div>
-                <input type="file" accept="image/*" class="theme-bg-input" data-theme="https://unpkg.com/7.css" style="display: none;">
-                <div class="theme-bg-status" data-theme="https://unpkg.com/7.css" style="font-size: 11px; color: #444;">Using default wallpaper</div>
-                <img class="theme-bg-preview" data-theme="https://unpkg.com/7.css" alt="Windows 7 wallpaper preview" style="display: none; width: 100%; max-height: 90px; object-fit: cover; border: 1px solid #808080;">
+                <input type="file" accept="image/*" class="theme-bg-input" data-theme="/themes/7.css" style="display: none;">
+                <div class="theme-bg-status" data-theme="/themes/7.css" style="font-size: 11px; color: #444;">Using default wallpaper</div>
+                <img class="theme-bg-preview" data-theme="/themes/7.css" alt="Windows 7 wallpaper preview" style="display: none; width: 100%; max-height: 90px; object-fit: cover; border: 1px solid #808080;">
               </div>
             </div>
           </fieldset>
