@@ -6,7 +6,7 @@ const catThemes = {
 };
 const STORAGE_KEY = 'brightFuture';
 const defaultSettings = {
-    selectedTheme: 'https://unpkg.com/7.css',
+    selectedTheme: 'https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@latest/themes/7.css',
     customBackgrounds: {},
     showClock: true,
     showCat: true,
